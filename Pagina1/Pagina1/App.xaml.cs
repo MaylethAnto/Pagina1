@@ -25,7 +25,7 @@ namespace Pagina1
         public App()
         {
             InitializeComponent();
-            MainPage = new NavigationPage(new PetProfilePage());
+            MainPage = new NavigationPage(new LoginPage());
         }
 
         protected override void OnStart()

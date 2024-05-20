@@ -1,14 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:Pagina1.VistaModelo"
              x:Class="Pagina1.Vista.PetProfilePage"
              BackgroundColor="LightGray"
              Padding="0">
 
+    <!-- Establecer el BindingContext -->
+    <ContentPage.BindingContext>
+        <viewModel:PetProfileViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Agregar Mascota" IconImageSource="icon_add.png" Clicked="OnAddPetClicked" />
+        <ToolbarItem Text="Perfil" IconImageSource="icon_profile.png" Clicked="OnProfileClicked" />
+    </ContentPage.ToolbarItems>
+
+
     <ContentPage.Content>
         <StackLayout>
+            <!-- Existing Profile Information -->
             <StackLayout>
-                <!-- Eliminación de la línea azul superior -->
                 <StackLayout Padding="20,0">
                     <Frame BackgroundColor="#6a5acd" Padding="20" CornerRadius="10" Margin="20,20,20,0">
                         <StackLayout>
@@ -28,43 +40,45 @@
                         </StackLayout>
                     </Frame>
                 </StackLayout>
+            </StackLayout>
 
-                <!-- Agregar campos de entrada -->
-                <StackLayout Margin="20,20,20,0">
-                    <Entry Placeholder="Nombre de la mascota" Text="{Binding PetName}" />
-                    <Entry Placeholder="Edad de la mascota" Text="{Binding PetAge}" Keyboard="Numeric" />
-                    <Entry Placeholder="Peso de la mascota" Text="{Binding PetWeight}" Keyboard="Numeric" />
-                    <Button Text="Seleccionar imagen" Clicked="OnSelectImageClicked" />
-                </StackLayout>
-                <StackLayout>
-                    <Grid Margin="20,20,20,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+            <!-- Formulario de Nueva Mascota -->
+            <StackLayout Margin="20,20,20,0" IsVisible="{Binding IsAddingPet}">
+                <Entry Placeholder="Nombre de la mascota" Text="{Binding NewPetName}" />
+                <Entry Placeholder="Raza de la mascota" Text="{Binding NewPetBreed}" />
+                <Entry Placeholder="Edad de la mascota" Text="{Binding NewPetAge}" Keyboard="Numeric" />
+                <Entry Placeholder="Peso de la mascota" Text="{Binding NewPetWeight}" Keyboard="Numeric" />
+                <Button Text="Seleccionar imagen" Clicked="OnSelectImageClicked" />
+                <Button Text="Guardar Mascota" Command="{Binding SavePetCommand}" Clicked="OnSavePetClicked" />
+            </StackLayout>
 
-                        <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="White" Padding="10" CornerRadius="10">
-                            <Label Text="Saved Recipes" VerticalOptions="Center" HorizontalOptions="Center" />
-                        </Frame>
-                        <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="White" Padding="10" CornerRadius="10">
-                            <Label Text="Saved Experts" VerticalOptions="Center" HorizontalOptions="Center" />
-                        </Frame>
-                        <Frame Grid.Row="1" Grid.Column="0" BackgroundColor="White" Padding="10" CornerRadius="10">
-                            <Label Text="Allergies" VerticalOptions="Center" HorizontalOptions="Center" />
-                        </Frame>
-                        <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="White" Padding="10" CornerRadius="10">
-                            <Label Text="Known Diseases" VerticalOptions="Center" HorizontalOptions="Center" />
-                        </Frame>
-                    </Grid>
+            <!-- Secciones adicionales -->
+            <StackLayout>
+                <Grid Margin="20,20,20,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                    <Button Text="Complete Medical History" BackgroundColor="Black" TextColor="White" Margin="20,20,20,0" CornerRadius="10" />
-                    <!-- Agregando el botón de registro -->
-                    <Button Text="Registrar" BackgroundColor="Black" TextColor="White" Margin="20,20,20,0" CornerRadius="10" />
-                </StackLayout>
+                    <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="White" Padding="10" CornerRadius="10">
+                        <Label Text="Historial Clínico" VerticalOptions="Center" HorizontalOptions="Center" />
+                    </Frame>
+                    <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="White" Padding="10" CornerRadius="10">
+                        <Label Text="Entrenador" VerticalOptions="Center" HorizontalOptions="Center" />
+                    </Frame>
+                    <Frame Grid.Row="1" Grid.Column="0" BackgroundColor="White" Padding="10" CornerRadius="10">
+                        <Label Text="Comida" VerticalOptions="Center" HorizontalOptions="Center" />
+                    </Frame>
+                    <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="White" Padding="10" CornerRadius="10">
+                        <Label Text="Compras" VerticalOptions="Center" HorizontalOptions="Center" />
+                    </Frame>
+                </Grid>
+                <Button Text="Complete Medical History" BackgroundColor="Black" TextColor="White" Margin="20,20,20,0" CornerRadius="10" />
+                <Button Text="Registrar" BackgroundColor="Black" TextColor="White" Margin="20,20,20,0" CornerRadius="10" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

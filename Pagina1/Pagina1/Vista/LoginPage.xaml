@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pagina1.Vista.LoginPage"
+             Title="Iniciar Sesión">
+    <StackLayout Padding="20">
+        <Entry x:Name="emailEntry" Placeholder="Correo Electrónico" Keyboard="Email" />
+        <Grid>
+            <Entry x:Name="passwordEntry" Placeholder="Contraseña" IsPassword="{Binding IsPassword}" />
+            <ImageButton Source="eye_icon.png" 
+                         WidthRequest="30" 
+                         HeightRequest="30" 
+                         HorizontalOptions="End" 
+                         VerticalOptions="Center" 
+                         Clicked="OnTogglePasswordVisibility" />
+        </Grid>
+        <Button Text="Iniciar Sesión" Clicked="OnLoginClicked" />
+        <Button Text="Registrarse" Clicked="OnRegisterClicked" />
+    </StackLayout>
+</ContentPage>
