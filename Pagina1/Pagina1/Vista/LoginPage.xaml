@@ -4,17 +4,20 @@
              x:Class="Pagina1.Vista.LoginPage"
              Title="Iniciar Sesión">
     <StackLayout Padding="20">
-        <Entry x:Name="emailEntry" Placeholder="Correo Electrónico" Keyboard="Email" />
-        <Grid>
-            <Entry x:Name="passwordEntry" Placeholder="Contraseña" IsPassword="{Binding IsPassword}" />
-            <ImageButton Source="eye_icon.png" 
-                         WidthRequest="30" 
-                         HeightRequest="30" 
-                         HorizontalOptions="End" 
-                         VerticalOptions="Center" 
-                         Clicked="OnTogglePasswordVisibility" />
-        </Grid>
-        <Button Text="Iniciar Sesión" Clicked="OnLoginClicked" />
-        <Button Text="Registrarse" Clicked="OnRegisterClicked" />
+        <Entry x:Name="EmailEntry" 
+               Placeholder="Correo electrónico"
+               Keyboard="Email"/>
+
+        <Entry x:Name="PasswordEntry" 
+               Placeholder="Contraseña"
+               IsPassword="True"/>
+
+        <Button x:Name="LoginButton" 
+                Text="Iniciar Sesión"
+                Clicked="OnLoginClicked"/>
+
+        <Button x:Name="RegisterButton" 
+                Text="Registrarse"
+                Clicked="OnRegisterClicked"/>
     </StackLayout>
 </ContentPage>

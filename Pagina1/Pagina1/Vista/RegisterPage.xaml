@@ -1,29 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pagina1.Vista.RegisterPage"
-             Title="Registrarse">
+             x:Class="Pagina1.Vista.RegisterPage">
+
     <StackLayout Padding="20">
-        <Entry x:Name="nombreEntry" Placeholder="Nombre" />
-        <Entry x:Name="correoEntry" Placeholder="Correo Electrónico" Keyboard="Email" />
-        <Grid>
-            <Entry x:Name="contrasenaEntry" Placeholder="Contraseña" IsPassword="{Binding IsPassword}" />
-            <ImageButton Source="eye_icon.png" 
-                         WidthRequest="30" 
-                         HeightRequest="30" 
-                         HorizontalOptions="End" 
-                         VerticalOptions="Center" 
-                         Clicked="OnTogglePasswordVisibility" />
-        </Grid>
-        <Grid>
-            <Entry x:Name="confirmarContrasenaEntry" Placeholder="Confirmar Contraseña" IsPassword="{Binding IsConfirmPassword}" />
-            <ImageButton Source="eye_icon.png" 
-                         WidthRequest="30" 
-                         HeightRequest="30" 
-                         HorizontalOptions="End" 
-                         VerticalOptions="Center" 
-                         Clicked="OnToggleConfirmPasswordVisibility" />
-        </Grid>
-        <Button Text="Registrarse" Clicked="OnRegisterClicked" />
+        <!-- Cedula -->
+        <Entry x:Name="CedulaEntry" Placeholder="Cédula" Keyboard="Text" Margin="0,10" />
+
+        <!-- Nombre -->
+        <Entry x:Name="NombreEntry" Placeholder="Nombre completo" Keyboard="Text" Margin="0,10" />
+
+        <!-- Correo -->
+        <Entry x:Name="CorreoEntry" Placeholder="Correo electrónico" Keyboard="Email" Margin="0,10" />
+
+        <!-- Contraseña -->
+        <Entry x:Name="ContraseñaEntry" Placeholder="Contraseña" IsPassword="True" Margin="0,10" />
+
+        <!-- Confirmar Contraseña -->
+        <Entry x:Name="ConfirmarContraseñaEntry" Placeholder="Confirmar Contraseña" IsPassword="True" Margin="0,10" />
+
+        <!-- Selección de Rol -->
+        <Picker x:Name="RolPicker" Title="Seleccione un rol" Margin="0,10">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Administrador</x:String>
+                    <x:String>Paseador</x:String>
+                    <x:String>Dueno</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+
+        <!-- Botón de Registro -->
+        <Button Text="Registrar" BackgroundColor="Black" TextColor="White" Margin="0,20" Clicked="OnRegisterButtonClicked" />
+
     </StackLayout>
+
 </ContentPage>

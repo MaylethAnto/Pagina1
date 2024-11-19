@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pagina1.Vista.MainPage">
+    <ScrollView>
+        <StackLayout Padding="20">
+            <Button Text="Registrar Mascota"
+                    Clicked="OnRegistrarMascotaClicked"/>
+
+            <Button Text="Registrar Dueño"
+                    Clicked="OnRegistrarDuenoClicked"/>
+
+            <Button Text="Historial Clínico"
+                    Clicked="OnHistorialClinicoClicked"/>
+
+            <Button Text="GPS"
+                    Clicked="OnGPSClicked"/>
+
+            <Button Text="Ejercicios"
+                    Clicked="OnEjerciciosClicked"/>
+
+            <Button Text="Paseadores"
+                    Clicked="OnPaseadoresClicked"/>
+
+            <Button Text="Recetas"
+                    Clicked="OnRecetasClicked"/>
+
+            <Button Text="Cerrar Sesión"
+                    Clicked="OnLogoutClicked"/>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

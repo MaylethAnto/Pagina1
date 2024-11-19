@@ -1,65 +1,74 @@
 ﻿using Pagina1.Modelo;
-using Pagina1.Controlador;
+using Pagina1.Servicios;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 using Xamarin.Forms;
-using System.IO;
+using Xamarin.Forms.Xaml;
 
 namespace Pagina1.Vista
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class RegisterPage : ContentPage
     {
-        private UserProfileController userProfileController;
-        private bool isPasswordHidden = true;
-        private bool isConfirmPasswordHidden = true;
+        private readonly ApiService _apiService;
 
         public RegisterPage()
         {
             InitializeComponent();
-            string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UserProfile.db3");
-            userProfileController = new UserProfileController(dbPath);
+            _apiService = new ApiService(); // Suponiendo que tienes una clase ApiService
         }
 
-        private async void OnRegisterClicked(object sender, EventArgs e)
+        private async void OnRegisterButtonClicked(object sender, EventArgs e)
         {
-            // Obtener valores de los campos de entrada
-            string nombre = nombreEntry.Text;
-            string correoElectronico = correoEntry.Text;
-            string contrasena = contrasenaEntry.Text;
-            string confirmarContrasena = confirmarContrasenaEntry.Text;
+            var cedula = CedulaEntry.Text;
+            var nombre = NombreEntry.Text;
+            var correo = CorreoEntry.Text;
+            var contraseña = ContraseñaEntry.Text;
+            var confirmarContraseña = ConfirmarContraseñaEntry.Text;
+            var rol = RolPicker.SelectedItem?.ToString();
 
-            // Verificar si las contraseñas coinciden
-            if (contrasena != confirmarContrasena)
+            // Validación simple
+            if (string.IsNullOrEmpty(cedula) || string.IsNullOrEmpty(nombre) ||
+                string.IsNullOrEmpty(correo) || string.IsNullOrEmpty(contraseña) ||
+                string.IsNullOrEmpty(confirmarContraseña) || string.IsNullOrEmpty(rol))
+            {
+                await DisplayAlert("Error", "Por favor, complete todos los campos", "OK");
+                return;
+            }
+
+            if (contraseña != confirmarContraseña)
             {
                 await DisplayAlert("Error", "Las contraseñas no coinciden", "OK");
                 return;
             }
 
-            // Crear un nuevo perfil de usuario
-            var newUserProfile = new UserProfile
+            var usuario = new Usuario
             {
+                Cedula = cedula,
                 Nombre = nombre,
-                CorreoElectronico = correoElectronico,
-                Contrasena = contrasena
+                Correo = correo,
+                Contraseña = contraseña,
+                Rol = rol // Asignamos el rol seleccionado
             };
 
-            // Guardar el nuevo perfil de usuario
-            await userProfileController.SaveUserProfileAsync(newUserProfile);
-            await DisplayAlert("Éxito", "Usuario registrado correctamente", "OK");
+            var result = await _apiService.RegisterUsuarioAsync(usuario);
 
-            // Navegar a la página de inicio o donde corresponda
-            await Navigation.PopAsync();
-        }
-
-        private void OnTogglePasswordVisibility(object sender, EventArgs e)
-        {
-            isPasswordHidden = !isPasswordHidden;
-            contrasenaEntry.IsPassword = isPasswordHidden;
-        }
-
-        private void OnToggleConfirmPasswordVisibility(object sender, EventArgs e)
-        {
-            isConfirmPasswordHidden = !isConfirmPasswordHidden;
-            confirmarContrasenaEntry.IsPassword = isConfirmPasswordHidden;
+            if (result != null)
+            {
+                await DisplayAlert("Éxito", "¡Registro exitoso!", "OK");
+                // Redirigir a otra página después del registro
+                await Navigation.PushAsync(new LoginPage());
+            }
+            else
+            {
+                await DisplayAlert("Error", "Hubo un problema al registrar el usuario", "OK");
+            }
         }
     }
+
+
 }

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pagina1.Vista.RegistroMascotaPage">
+    <ScrollView>
+        <StackLayout Padding="20">
+            <Entry x:Name="NombreEntry"
+                   Placeholder="Nombre de la mascota"
+                   TextColor="Black"/>
+
+            <Entry x:Name="EdadEntry"
+                   Placeholder="Edad"
+                   Keyboard="Numeric"
+                   TextColor="Black"/>
+            
+            <Entry x:Name="RazaEntry"
+                   Placeholder="Raza"
+                   TextColor="Black"/>
+
+            <Entry x:Name="PesoEntry"
+                   Placeholder="Peso (kg)"
+                   Keyboard="Numeric"
+                   TextColor="Black"/>
+
+            <Button Text="Seleccionar Foto"
+                    Clicked="OnSeleccionarFotoClicked"/>
+
+            <Image x:Name="FotoImagen" 
+                   WidthRequest="200"
+                   HeightRequest="200"
+                   Aspect="AspectFill"/>
+
+            <Button Text="Guardar"
+                    Clicked="OnGuardarClicked"/>
+
+            <Button Text="Cancelar"
+                    Clicked="OnCancelarClicked"/>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
