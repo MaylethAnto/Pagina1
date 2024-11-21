@@ -16,7 +16,7 @@ namespace Pagina1.Servicios
         public AuthService()
         {
             _client = new HttpClient();
-            _client.BaseAddress = new Uri("https://192.168.100.200:5138/api/");
+            _client.BaseAddress = new Uri("http://192.168.176.39:5138/api/");
         }
 
         public async Task<bool> Login(string usuario, string contrasena)
@@ -59,11 +59,59 @@ namespace Pagina1.Servicios
             }
             return false;
         }
-    }
+        public async Task<bool> RegisterUserAsync(string cedula, string nombre, string email, string password, string tipo)
+        {
+            try
+            {
+                // Crear el objeto con los datos del usuario
+                var user = new
+                {
+                    Cedula = cedula,
+                    Nombre = nombre,
+                    Email = email,
+                    Password = password,
+                    TipoUsuario = tipo
+                };
 
-        public class LoginResponse
+                // Serializar el objeto a JSON
+                string json = JsonSerializer.Serialize(user);
+
+                // Crear el contenido HTTP
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                // Hacer la llamada POST a la API
+                var response = await _client.PostAsync("api/users/register", content); // Cambia el endpoint según tu API
+
+                // Verificar la respuesta de la API
+                if (response.IsSuccessStatusCode)
+                {
+                    return true; // Registro exitoso
+                }
+                else
+                {
+                    // Opcional: loguear el error o manejarlo
+                    string errorResponse = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Error: {errorResponse}");
+                    return false; // Fallo en el registro
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones
+                Console.WriteLine($"Excepción: {ex.Message}");
+                return false;
+            }
+        }
+    }
+    public class LoginResponse
     {
         public string Token { get; set; }
         public string TipoPerfil { get; set; }
     }
 }
+
+
+
+
+
+

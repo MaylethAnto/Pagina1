@@ -22,54 +22,51 @@ namespace Pagina1.Vista
         private async void OnLoginClicked(object sender, EventArgs e)
         {
             // Usar FindByName para obtener referencias a los Entry
-            var emailEntry = this.FindByName<Entry>("EmailEntry");
-            var passwordEntry = this.FindByName<Entry>("PasswordEntry");
+            string username = usernameEntry.Text;
+            string password = passwordEntry.Text;
+            string role = rolePicker.SelectedItem.ToString();
 
             // Validaciones de entrada
-            if (emailEntry == null || passwordEntry == null)
+            if (usernameEntry == null || passwordEntry == null)
             {
-                await DisplayAlert("Error", "No se encontraron los campos de entrada", "OK");
+                await DisplayAlert("Error", "No se encuentra registrado", "OK");
                 return;
             }
 
-            if (string.IsNullOrEmpty(emailEntry.Text) || string.IsNullOrEmpty(passwordEntry.Text))
+            if (string.IsNullOrEmpty(usernameEntry.Text) || string.IsNullOrEmpty(passwordEntry.Text))
             {
-                await DisplayAlert("Error", "Por favor complete todos los campos", "OK");
+                await DisplayAlert("Error", "Por favor ingrese usuario y contraseña", "OK");
                 return;
             }
 
-            if (!IsValidEmail(emailEntry.Text))
+            if (!IsValidEmail(usernameEntry.Text))
             {
                 await DisplayAlert("Error", "Por favor ingrese un email válido", "OK");
                 return;
             }
 
-            // Intento de login
-            bool resultado = await _authService.Login(emailEntry.Text, passwordEntry.Text);
+            // Aquí llamamos a la API para verificar las credenciales
+            var result = await LoginService.Login(username, password, role);
 
-            if (resultado)
+            if (result.IsSuccessful)
             {
-                var tipoPerfil = Preferences.Get("TipoPerfil", "");
-
-                switch (tipoPerfil)
+                // Aquí se navega según el rol
+                if (role == "Administrador")
                 {
-                    case "ADMINISTRADOR":
-                        await Navigation.PushAsync(new AdminPage());
-                        break;
-                    case "DUEÑO":
-                        await Navigation.PushAsync(new RegistroDuenoPage());
-                        break;
-                    case "PASEADOR":
-                        await Navigation.PushAsync(new PaseadoresPage());
-                        break;
-                    default:
-                        await DisplayAlert("Error", "Perfil no reconocido", "OK");
-                        break;
+                    await Navigation.PushAsync(new AdminPage());
+                }
+                else if (role == "Dueño")
+                {
+                    await Navigation.PushAsync(new DuenoPage());
+                }
+                else if (role == "Paseador")
+                {
+                    await Navigation.PushAsync(new PaseadorPage());
                 }
             }
             else
             {
-                await DisplayAlert("Error", "Credenciales inválidas", "OK");
+                await DisplayAlert("Error", "Credenciales incorrectas", "OK");
             }
         }
 

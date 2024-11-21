@@ -30,9 +30,10 @@
             </Picker.ItemsSource>
         </Picker>
 
-        <!-- Botón de Registro -->
-        <Button Text="Registrar" BackgroundColor="Black" TextColor="White" Margin="0,20" Clicked="OnRegisterButtonClicked" />
-
+        <!-- Botón de Registro-->
+            <Button
+        Text="REGISTRAR"
+        Clicked="OnRegisterButtonClicked" />
     </StackLayout>
 
 </ContentPage>

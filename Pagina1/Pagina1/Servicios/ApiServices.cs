@@ -17,7 +17,7 @@ namespace Pagina1.Servicios
     public class ApiService
     {
         private readonly HttpClient _client;
-        private readonly string _baseUrl = "https://192.168.100.200:5138/api/";
+        private readonly string _baseUrl = "http://192.168.176.39:5138/api/";
 
         public ApiService()
         {

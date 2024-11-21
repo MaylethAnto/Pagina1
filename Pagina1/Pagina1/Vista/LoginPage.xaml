@@ -4,17 +4,22 @@
              x:Class="Pagina1.Vista.LoginPage"
              Title="Iniciar Sesión">
     <StackLayout Padding="20">
-        <Entry x:Name="EmailEntry" 
-               Placeholder="Correo electrónico"
-               Keyboard="Email"/>
+        <Label Text="Usuario" />
+        <Entry x:Name="usernameEntry" Placeholder="Ingrese su usuario" />
 
-        <Entry x:Name="PasswordEntry" 
-               Placeholder="Contraseña"
-               IsPassword="True"/>
+        <Label Text="Contraseña" />
+        <Entry x:Name="passwordEntry" Placeholder="Ingrese su contraseña" IsPassword="True" />
 
-        <Button x:Name="LoginButton" 
-                Text="Iniciar Sesión"
-                Clicked="OnLoginClicked"/>
+        <Label Text="Seleccionar rol" />
+        <Picker x:Name="rolePicker">
+            <Picker.Items>
+                <x:String>Administrador</x:String>
+                <x:String>Dueño</x:String>
+                <x:String>Paseador</x:String>
+            </Picker.Items>
+        </Picker>
+
+        <Button Text="Iniciar sesión" Clicked="OnLoginClicked" />
 
         <Button x:Name="RegisterButton" 
                 Text="Registrarse"

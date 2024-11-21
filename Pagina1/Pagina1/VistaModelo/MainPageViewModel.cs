@@ -18,8 +18,7 @@ namespace Pagina1.VistaModelo
 
         public async Task LoadUsuariosAsync()
         {
-            var usuarios = await _apiService.GetAsync<List<Usuario>>("usuario"); // Cambia "usuario" por tu endpoint
-                                                                                 // Lógica adicional para actualizar la interfaz
+            var usuarios = await _apiService.GetAsync<List<Usuario>>("usuario"); 
         }
     }
 
