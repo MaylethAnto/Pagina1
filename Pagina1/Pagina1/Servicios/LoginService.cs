@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace Pagina1.Servicios
 {
+    //login admin
     public static class LoginService
     {
         private static readonly string apiUrl = "http://tuapiurl.com";  // Cambia esta URL por la tuya.

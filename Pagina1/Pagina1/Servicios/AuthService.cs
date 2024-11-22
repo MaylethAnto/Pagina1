@@ -1,117 +1,88 @@
-﻿using Pagina1.Dtos;
+﻿using Newtonsoft.Json;
+using Pagina1.Dtos;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 
 namespace Pagina1.Servicios
 {
     public class AuthService
     {
-        private HttpClient _client;
+        private static readonly string ApiUrlRegistrarAdministrador = "http://10.0.2.2:5138/api/auth/registrar-administrador";
+        private readonly HttpClient _client;
 
         public AuthService()
         {
             _client = new HttpClient();
-            _client.BaseAddress = new Uri("http://192.168.176.39:5138/api/");
-        }
-
-        public async Task<bool> Login(string usuario, string contrasena)
-        {
-            var loginDto = new LoginDto
             {
-                NombreUsuario = usuario,
-                Contrasena = contrasena
+                _client.BaseAddress = new Uri("https://10.0.2.2:5138/api/auth/registrar-usuario");
+
             };
-
-            var json = JsonSerializer.Serialize(loginDto);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-            var response = await _client.PostAsync("auth/login", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<LoginResponse>(resultJson);
-
-                Preferences.Set("AuthToken", result.Token);
-                Preferences.Set("TipoPerfil", result.TipoPerfil);
-                return true;
-            }
-            return false;
         }
 
-        public async Task<bool> Register(RegisterDto registro)
-        {
-            var json = JsonSerializer.Serialize(registro);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-            var response = await _client.PostAsync("auth/register", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var resultJson = await response.Content.ReadAsStringAsync();
-                // Si necesitas deserializar alguna respuesta
-                return true;
-            }
-            return false;
-        }
-        public async Task<bool> RegisterUserAsync(string cedula, string nombre, string email, string password, string tipo)
+        //registar admin
+        public async Task<bool> RegistrarAdministradorAsync(RegistrarAdministradorDto dto)
         {
             try
             {
-                // Crear el objeto con los datos del usuario
-                var user = new
-                {
-                    Cedula = cedula,
-                    Nombre = nombre,
-                    Email = email,
-                    Password = password,
-                    TipoUsuario = tipo
-                };
-
-                // Serializar el objeto a JSON
-                string json = JsonSerializer.Serialize(user);
-
-                // Crear el contenido HTTP
+                // Serializar el DTO a JSON
+                var json = JsonConvert.SerializeObject(dto);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                // Hacer la llamada POST a la API
-                var response = await _client.PostAsync("api/users/register", content); // Cambia el endpoint según tu API
+                // Realizar la petición POST
+                var response = await _client.PostAsync(ApiUrlRegistrarAdministrador, content);
 
-                // Verificar la respuesta de la API
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Administrador registrado correctamente.");
+                    return true;
+                }
+                else
+                {
+                    // Mostrar el mensaje de error devuelto por la API
+                    var errorResponse = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Error al registrar administrador: {errorResponse}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Excepción al registrar administrador: {ex.Message}");
+                return false;
+            }
+        }
+
+        //registrar dueño y paseador
+        public async Task<bool> Register(RegistrarUsuarioDto registerDto)
+        {
+            try
+            {
+                // Serializar el objeto RegisterDto a JSON
+                var jsonContent = JsonConvert.SerializeObject(registerDto);
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                // Enviar el POST a la API en el endpoint correspondiente
+                var response = await _client.PostAsync("api/auth/registrar-usuario", content);
+
+                // Validar respuesta de la API
                 if (response.IsSuccessStatusCode)
                 {
                     return true; // Registro exitoso
                 }
                 else
                 {
-                    // Opcional: loguear el error o manejarlo
-                    string errorResponse = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Error: {errorResponse}");
-                    return false; // Fallo en el registro
+                    // Manejar errores específicos según la respuesta de la API
+                    Console.WriteLine($"Error al registrar: {response.ReasonPhrase}");
+                    return false;
                 }
             }
             catch (Exception ex)
             {
-                // Manejar excepciones
-                Console.WriteLine($"Excepción: {ex.Message}");
+                // Manejo de errores
+                Console.WriteLine($"Excepción al registrar: {ex.Message}");
                 return false;
             }
         }
     }
-    public class LoginResponse
-    {
-        public string Token { get; set; }
-        public string TipoPerfil { get; set; }
-    }
 }
-
-
-
-
-
-

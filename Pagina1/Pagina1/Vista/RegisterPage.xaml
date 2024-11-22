@@ -1,39 +1,117 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pagina1.Vista.RegisterPage">
+             x:Class="Pagina1.Vista.RegisterPage"
+             Title="Registro">
 
-    <StackLayout Padding="20">
-        <!-- Cedula -->
-        <Entry x:Name="CedulaEntry" Placeholder="Cédula" Keyboard="Text" Margin="0,10" />
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
 
-        <!-- Nombre -->
-        <Entry x:Name="NombreEntry" Placeholder="Nombre completo" Keyboard="Text" Margin="0,10" />
+            <!-- Cédula -->
+            <Label Text="Cédula (10 dígitos)" FontAttributes="Bold" />
+            <Entry x:Name="CedulaEntry"
+                   Placeholder="Ingrese su cédula"
+                   Keyboard="Numeric"
+                   Margin="0,5"
+                   MaxLength="10"
+                   AutomationId="CedulaEntry" />
 
-        <!-- Correo -->
-        <Entry x:Name="CorreoEntry" Placeholder="Correo electrónico" Keyboard="Email" Margin="0,10" />
+            <!-- Nombre -->
+            <Label Text="Nombre completo" FontAttributes="Bold" />
+            <Entry x:Name="NombreEntry"
+                   Placeholder="Ingrese su nombre"
+                   Keyboard="Text"
+                   Margin="0,5"
+                   AutomationId="NombreEntry" />
 
-        <!-- Contraseña -->
-        <Entry x:Name="ContraseñaEntry" Placeholder="Contraseña" IsPassword="True" Margin="0,10" />
+            <!-- Correo -->
+            <Label Text="Correo electrónico" FontAttributes="Bold" />
+            <Entry x:Name="CorreoEntry"
+                   Placeholder="Ingrese su correo electrónico"
+                   Keyboard="Email"
+                   Margin="0,5"
+                   AutomationId="CorreoEntry" />
 
-        <!-- Confirmar Contraseña -->
-        <Entry x:Name="ConfirmarContraseñaEntry" Placeholder="Confirmar Contraseña" IsPassword="True" Margin="0,10" />
+            <!-- Picker para seleccionar el dominio del correo -->
+            <Picker x:Name="CorreoPicker">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>@gmail.com</x:String>
+                        <x:String>@outlook.com</x:String>
+                        <x:String>@yahoo.com</x:String>
+                        <x:String>@hotmail.com</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
 
-        <!-- Selección de Rol -->
-        <Picker x:Name="RolPicker" Title="Seleccione un rol" Margin="0,10">
-            <Picker.ItemsSource>
-                <x:Array Type="{x:Type x:String}">
-                    <x:String>Administrador</x:String>
-                    <x:String>Paseador</x:String>
-                    <x:String>Dueno</x:String>
-                </x:Array>
-            </Picker.ItemsSource>
-        </Picker>
+            <!-- Contraseña -->
+            <Label Text="Contraseña" FontAttributes="Bold" />
+            <Entry x:Name="ContraseñaEntry"
+                   Placeholder="Ingrese su contraseña"
+                   IsPassword="True"
+                   Margin="0,5"
+                   AutomationId="ContraseñaEntry" />
 
-        <!-- Botón de Registro-->
-            <Button
-        Text="REGISTRAR"
-        Clicked="OnRegisterButtonClicked" />
-    </StackLayout>
+            <!-- Confirmar Contraseña -->
+            <Label Text="Confirmar contraseña" FontAttributes="Bold" />
+            <Entry x:Name="ConfirmarContraseñaEntry"
+                   Placeholder="Confirme su contraseña"
+                   IsPassword="True"
+                   Margin="0,5"
+                   AutomationId="ConfirmarContraseñaEntry" />
+
+            <!-- Selección de Rol -->
+            <Label Text="Rol de usuario" FontAttributes="Bold" />
+            <Picker x:Name="RolPicker"
+                    Title="Seleccione un rol"
+                    Margin="0,5"
+                    SelectedIndexChanged="OnRoleChanged"
+                    AutomationId="RolPicker">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Administrador</x:String>
+                        <x:String>Paseador</x:String>
+                        <x:String>Dueño</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <!-- Campo adicional para clave maestra (solo visible para Administrador) -->
+            <StackLayout x:Name="ClaveMaestraStack" IsVisible="False">
+                <Label Text="Clave maestra" FontAttributes="Bold" />
+                <Entry x:Name="ClaveMaestraEntry"
+                       Placeholder="Ingrese la clave maestra"
+                       IsPassword="True"
+                       Margin="0,5"
+                       AutomationId="ClaveMaestraEntry" />
+            </StackLayout>
+
+            <!-- Campo adicional para dirección y celular (solo visible para Dueño o Paseador) -->
+            <StackLayout x:Name="DireccionCelularStack" IsVisible="False">
+                <Label Text="Dirección" FontAttributes="Bold" />
+                <Entry x:Name="DireccionEntry"
+                       Placeholder="Ingrese su dirección"
+                       Margin="0,5"
+                       AutomationId="DireccionEntry" />
+
+                <Label Text="Número celular (10 dígitos)" FontAttributes="Bold" />
+                <Entry x:Name="CelularEntry"
+                       Placeholder="Ingrese su número celular"
+                       Keyboard="Numeric"
+                       Margin="0,5"
+                       MaxLength="10"
+                       AutomationId="CelularEntry" />
+            </StackLayout>
+
+            <!-- Botón de Registro -->
+            <Button Text="REGISTRAR"
+                    Clicked="OnRegisterButtonClicked"
+                    BackgroundColor="#2196F3"
+                    TextColor="White"
+                    CornerRadius="10"
+                    FontAttributes="Bold"
+                    AutomationId="RegisterButton" />
+        </StackLayout>
+    </ScrollView>
 
 </ContentPage>
