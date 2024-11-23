@@ -76,14 +76,13 @@
                 </Picker.ItemsSource>
             </Picker>
 
-            <!-- Campo adicional para clave maestra (solo visible para Administrador) -->
+            <!-- Stack para clave maestra (Administrador) -->
             <StackLayout x:Name="ClaveMaestraStack" IsVisible="False">
-                <Label Text="Clave maestra" FontAttributes="Bold" />
-                <Entry x:Name="ClaveMaestraEntry"
-                       Placeholder="Ingrese la clave maestra"
-                       IsPassword="True"
-                       Margin="0,5"
-                       AutomationId="ClaveMaestraEntry" />
+                <Entry x:Name="ClaveMaestraEntry" 
+                       Placeholder="Clave maestra" 
+                       IsPassword="True"/>
+                <Entry x:Name="UsuarioAdminEntry"
+                       Placeholder="Usuario administrador"/>
             </StackLayout>
 
             <!-- Campo adicional para dirección y celular (solo visible para Dueño o Paseador) -->

@@ -17,7 +17,7 @@ namespace Pagina1.Servicios
     public class ApiService
     {
         private readonly HttpClient _client;
-        private readonly string _baseUrl = "http://192.168.176.39:5138/api/";
+        private readonly string _baseUrl = "http://10.0.2.2:5138/api/";
 
         public ApiService()
         {
@@ -143,48 +143,6 @@ namespace Pagina1.Servicios
                 throw;
             }
         }
-
-        // Métodos para Dueño
-        public async Task<List<Dueno>> GetDuenosAsync()
-        {
-            try
-            {
-                var response = await _client.GetAsync($"{_baseUrl}duenos");
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<List<Dueno>>(json);
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-        }
-
-        public async Task<Dueno> AddDuenoAsync(Dueno dueno)
-        {
-            try
-            {
-                var json = JsonConvert.SerializeObject(dueno);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await _client.PostAsync($"{_baseUrl}duenos", content);
-                if (response.IsSuccessStatusCode)
-                {
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<Dueno>(jsonResponse);
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-        }
-
         // Métodos para Ejercicio
         public async Task<List<Ejercicio>> GetEjerciciosAsync()
         {
@@ -308,46 +266,7 @@ namespace Pagina1.Servicios
             }
         }
 
-        // Métodos para Paseador
-        public async Task<List<Paseador>> GetPaseadoresAsync()
-        {
-            try
-            {
-                var response = await _client.GetAsync($"{_baseUrl}paseadores");
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<List<Paseador>>(json);
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-        }
 
-        public async Task<Paseador> AddPaseadorAsync(Paseador paseador)
-        {
-            try
-            {
-                var json = JsonConvert.SerializeObject(paseador);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await _client.PostAsync($"{_baseUrl}paseadores", content);
-                if (response.IsSuccessStatusCode)
-                {
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<Paseador>(jsonResponse);
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-        }
 
         // Métodos para Receta
         public async Task<List<Receta>> GetRecetasAsync()

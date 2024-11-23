@@ -3,6 +3,7 @@ using Pagina1.Servicios;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -12,166 +13,235 @@ namespace Pagina1.Vista
     public partial class RegisterPage : ContentPage
     {
         private readonly AuthService _authService;
-        private const string MASTER_PASSWORD = "TuClaveSecretaUnica2024$"; 
+        private const string MASTER_PASSWORD = "TuClaveSecretaUnica2024$";
 
         public RegisterPage()
         {
             InitializeComponent();
             _authService = new AuthService();
+
+            // Configuración inicial de visibilidad
+            ClaveMaestraStack.IsVisible = false;
+            DireccionCelularStack.IsVisible = false;
+
+            // Configurar el Picker de roles
+            RolPicker.SelectedIndexChanged += OnRoleChanged;
         }
 
-        // Se llama cuando el rol cambia
         private void OnRoleChanged(object sender, EventArgs e)
         {
-            var picker = sender as Picker;
-            var selectedRole = picker.SelectedItem.ToString();
+            if (RolPicker.SelectedItem == null) return;
 
-            // Mostrar/ocultar los campos según el rol seleccionado
-            if (selectedRole == "Administrador")
-            {
-                ClaveMaestraStack.IsVisible = true;
-                DireccionCelularStack.IsVisible = false;
-            }
-            else
-            {
-                ClaveMaestraStack.IsVisible = false;
-                DireccionCelularStack.IsVisible = true;
-            }
+            var selectedRole = RolPicker.SelectedItem.ToString();
+
+            // Actualizar visibilidad basada en el rol
+            ClaveMaestraStack.IsVisible = selectedRole == "Administrador";
+            DireccionCelularStack.IsVisible = selectedRole != "Administrador";
         }
 
         private async void OnRegisterButtonClicked(object sender, EventArgs e)
         {
-            var cedula = CedulaEntry.Text?.Trim();
-            var nombre = NombreEntry.Text?.Trim();
-            var correoBase = CorreoEntry.Text?.Trim();
-            var contrasena = ContraseñaEntry.Text;
-            var confirmarContrasena = ConfirmarContraseñaEntry.Text;
-            var rolSeleccionado = RolPicker.SelectedItem?.ToString();
-            var dominioCorreoSeleccionado = CorreoPicker.SelectedItem?.ToString();
-
-            if (string.IsNullOrWhiteSpace(cedula) || string.IsNullOrWhiteSpace(nombre) ||
-                string.IsNullOrWhiteSpace(correoBase) || string.IsNullOrWhiteSpace(contrasena) ||
-                string.IsNullOrWhiteSpace(confirmarContrasena) || string.IsNullOrWhiteSpace(rolSeleccionado) ||
-                string.IsNullOrWhiteSpace(dominioCorreoSeleccionado))
-            {
-                await DisplayAlert("Error", "Por favor, complete todos los campos", "OK");
-                return;
-            }
-
-            if (cedula.Length != 10 || !cedula.All(char.IsDigit))
-            {
-                await DisplayAlert("Error", "La cédula debe tener 10 dígitos numéricos", "OK");
-                return;
-            }
-
-            var correo = correoBase + dominioCorreoSeleccionado;
-
-            var celular = CelularEntry.Text?.Trim();
-            if (rolSeleccionado != "Administrador" && (string.IsNullOrWhiteSpace(celular) || celular.Length != 10 || !celular.All(char.IsDigit)))
-            {
-                await DisplayAlert("Error", "El número celular debe tener 10 dígitos numéricos", "OK");
-                return;
-            }
-
-            if (contrasena != confirmarContrasena)
-            {
-                await DisplayAlert("Error", "Las contraseñas no coinciden", "OK");
-                return;
-            }
-
             try
             {
+                if (!ValidarCamposBasicos()) return;
+
+                var cedula = CedulaEntry.Text.Trim();
+                var nombre = NombreEntry.Text.Trim();
+                var correoBase = CorreoEntry.Text.Trim();
+                var dominioCorreo = CorreoPicker.SelectedItem?.ToString() ?? "";
+                var correoCompleto = $"{correoBase}{dominioCorreo}";
+                var contrasena = ContraseñaEntry.Text;
+                var rolSeleccionado = RolPicker.SelectedItem?.ToString();
+
+                Debug.WriteLine($"Intentando registrar usuario con rol: {rolSeleccionado}");
+                Debug.WriteLine($"Correo completo: {correoCompleto}");
+
                 if (rolSeleccionado == "Administrador")
                 {
-                    // Eliminar el maxLength, o ponerlo a una longitud mayor según lo desees
-                    var claveMaestra = (await DisplayPromptAsync("Clave Maestra", "Ingrese la clave maestra para continuar", "Aceptar", "Cancelar", keyboard: Keyboard.Default))?.Trim();
-
-                    if (string.IsNullOrWhiteSpace(claveMaestra))
-                    {
-                        await DisplayAlert("Cancelado", "El registro de administrador fue cancelado", "OK");
-                        return;
-                    }
-
-                    if (claveMaestra != MASTER_PASSWORD)
-                    {
-                        await DisplayAlert("Error", "La clave maestra es incorrecta", "OK");
-                        return;
-                    }
-
-                    var adminDto = new RegistrarAdministradorDto
-                    {
-                        CedulaAdministrador = cedula,
-                        NombreAdministrador = nombre,
-                        CorreoAdministrador = correo,
-                        ContrasenaAdministrador = contrasena
-                    };
-
-                    var resultAdmin = await _authService.RegistrarAdministradorAsync(adminDto);
-                    if (resultAdmin)
-                    {
-                        await DisplayAlert("Éxito", "¡Administrador registrado exitosamente!", "OK");
-                        LimpiarFormulario();
-                    }
-                    else
-                    {
-                        await DisplayAlert("Error", "Hubo un problema al registrar el administrador.", "OK");
-                    }
+                    await RegistrarAdministrador(cedula, nombre, correoCompleto, contrasena);
                 }
                 else
                 {
-                    string direccion = string.Empty;
-                    string numeroCelular = string.Empty;
-
-                    if (rolSeleccionado != "Administrador")
-                    {
-                        direccion = await DisplayPromptAsync("Dirección Requerida", "Por favor, ingrese su dirección", "Confirmar", "Cancelar");
-                        if (string.IsNullOrWhiteSpace(direccion))
-                        {
-                            await DisplayAlert("Error", "La dirección es obligatoria para los roles de Dueño o Paseador", "OK");
-                            return;
-                        }
-
-                        numeroCelular = celular;
-                    }
-
-                    var registerDto = new RegistrarUsuarioDto
-                    {
-                        Cedula = cedula,
-                        Nombre = nombre,
-                        Correo = correo,
-                        Contrasena = contrasena,
-                        Rol = rolSeleccionado,
-                        Direccion = direccion,
-                        Celular = numeroCelular
-                    };
-
-                    var result = await _authService.Register(registerDto);
-                    if (result)
-                    {
-                        await DisplayAlert("Éxito", "¡Usuario registrado exitosamente!", "OK");
-                        LimpiarFormulario();
-                    }
-                    else
-                    {
-                        await DisplayAlert("Error", "Hubo un problema al registrar el usuario.", "OK");
-                    }
+                    await RegistrarUsuario(cedula, nombre, correoCompleto, contrasena, rolSeleccionado);
                 }
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", $"Ocurrió un error inesperado: {ex.Message}\n{ex.StackTrace}", "OK");
+                Debug.WriteLine($"Error en OnRegisterButtonClicked: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                await DisplayAlert("Error", $"Error inesperado: {ex.Message}", "OK");
             }
         }
 
+        private bool ValidarCamposBasicos()
+        {
+            try
+            {
+                // Validar campos requeridos
+                if (string.IsNullOrWhiteSpace(CedulaEntry.Text) ||
+                    string.IsNullOrWhiteSpace(NombreEntry.Text) ||
+                    string.IsNullOrWhiteSpace(CorreoEntry.Text) ||
+                    string.IsNullOrWhiteSpace(ContraseñaEntry.Text) ||
+                    string.IsNullOrWhiteSpace(ConfirmarContraseñaEntry.Text) ||
+                    RolPicker.SelectedItem == null ||
+                    CorreoPicker.SelectedItem == null)
+                {
+                    DisplayAlert("Error", "Por favor, complete todos los campos requeridos", "OK");
+                    return false;
+                }
+
+                // Validar cédula
+                if (CedulaEntry.Text.Length != 10 || !CedulaEntry.Text.All(char.IsDigit))
+                {
+                    DisplayAlert("Error", "La cédula debe tener 10 dígitos numéricos", "OK");
+                    return false;
+                }
+
+                // Validar contraseñas
+                if (ContraseñaEntry.Text != ConfirmarContraseñaEntry.Text)
+                {
+                    DisplayAlert("Error", "Las contraseñas no coinciden", "OK");
+                    return false;
+                }
+
+                Debug.WriteLine("Validación básica exitosa");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error en ValidarCamposBasicos: {ex.Message}");
+                return false;
+            }
+        }
+
+        private async Task RegistrarAdministrador(string cedula, string nombre, string correo, string contrasena)
+        {
+            try
+            {
+                Debug.WriteLine("Iniciando registro de administrador");
+
+                // Validar la clave maestra
+                var claveMaestra = ClaveMaestraEntry?.Text;
+                var usuarioAdmin = UsuarioAdminEntry?.Text;
+
+                if (string.IsNullOrWhiteSpace(claveMaestra) || string.IsNullOrWhiteSpace(usuarioAdmin))
+                {
+                    await DisplayAlert("Error", "La clave maestra y el usuario administrador son requeridos", "OK");
+                    return;
+                }
+
+                if (claveMaestra != MASTER_PASSWORD)
+                {
+                    await DisplayAlert("Error", "La clave maestra es incorrecta", "OK");
+                    return;
+                }
+
+                var adminDto = new RegistrarAdministradorDto
+                {
+                    CedulaAdministrador = cedula,
+                    NombreAdministrador = nombre,
+                    CorreoAdministrador = correo,
+                    ContrasenaAdministrador = contrasena,
+                    UsuarioAdministrador = usuarioAdmin,
+                    ClaveMaestra = claveMaestra
+                };
+
+                Debug.WriteLine("Enviando datos al servicio de registro");
+                var result = await _authService.RegistrarAdministradorAsync(adminDto);
+
+                if (result)
+                {
+                    await DisplayAlert("Éxito", "¡Administrador registrado exitosamente!", "OK");
+                    LimpiarFormulario();
+                }
+                else
+                {
+                    await DisplayAlert("Error", "No se pudo registrar el administrador", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error en RegistrarAdministrador: {ex.Message}");
+                await DisplayAlert("Error", $"Error al registrar administrador: {ex.Message}", "OK");
+            }
+        }
+
+        private async Task RegistrarUsuario(string cedula, string nombre, string correo, string contrasena, string rol)
+        {
+            try
+            {
+                Debug.WriteLine("Iniciando registro de usuario normal");
+                // Validar celular para roles no administrador
+                if (string.IsNullOrWhiteSpace(CelularEntry.Text) ||
+                    CelularEntry.Text.Length != 10 ||
+                    !CelularEntry.Text.All(char.IsDigit))
+                {
+                    await DisplayAlert("Error", "El número celular debe tener 10 dígitos numéricos", "OK");
+                    return;
+                }
+
+                var direccion = DireccionEntry.Text?.Trim();
+                if (string.IsNullOrWhiteSpace(direccion))
+                {
+                    await DisplayAlert("Error", "La dirección es obligatoria", "OK");
+                    return;
+                }
+
+                var registerDto = new RegistrarUsuarioDto
+                {
+                    Cedula = cedula,
+                    Nombre = nombre,
+                    Correo = correo,
+                    Contrasena = contrasena,
+                    Rol = rol,
+                    Direccion = direccion,
+                    Celular = CelularEntry.Text.Trim()
+                };
+
+                Debug.WriteLine("Enviando datos al servicio de registro de usuario");
+                var result = await _authService.Register(registerDto);
+
+                if (result)
+                {
+                    await DisplayAlert("Éxito", "¡Usuario registrado exitosamente!", "OK");
+                    LimpiarFormulario();
+                }
+                else
+                {
+                    await DisplayAlert("Error", "No se pudo registrar el usuario", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error en RegistrarUsuario: {ex.Message}");
+                await DisplayAlert("Error", $"Error al registrar usuario: {ex.Message}", "OK");
+            }
+        }
 
         private void LimpiarFormulario()
         {
-            CedulaEntry.Text = string.Empty;
-            NombreEntry.Text = string.Empty;
-            CorreoEntry.Text = string.Empty;
-            ContraseñaEntry.Text = string.Empty;
-            ConfirmarContraseñaEntry.Text = string.Empty;
-            RolPicker.SelectedItem = null;
+            try
+            {
+                CedulaEntry.Text = string.Empty;
+                NombreEntry.Text = string.Empty;
+                CorreoEntry.Text = string.Empty;
+                ContraseñaEntry.Text = string.Empty;
+                ConfirmarContraseñaEntry.Text = string.Empty;
+                DireccionEntry.Text = string.Empty;
+                CelularEntry.Text = string.Empty;
+                ClaveMaestraEntry.Text = string.Empty;
+                UsuarioAdminEntry.Text = string.Empty;
+                RolPicker.SelectedItem = null;
+                CorreoPicker.SelectedItem = null;
+
+                // Restablecer visibilidad
+                ClaveMaestraStack.IsVisible = false;
+                DireccionCelularStack.IsVisible = false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error en LimpiarFormulario: {ex.Message}");
+            }
         }
     }
 }

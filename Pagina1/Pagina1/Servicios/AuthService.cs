@@ -2,6 +2,7 @@
 using Pagina1.Dtos;
 using System;
 using System.Net.Http;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,79 +10,105 @@ namespace Pagina1.Servicios
 {
     public class AuthService
     {
-        private static readonly string ApiUrlRegistrarAdministrador = "http://10.0.2.2:5138/api/auth/registrar-administrador";
         private readonly HttpClient _client;
+        private const string BaseUrl = "http://10.0.2.2:5138/api/auth/";
 
         public AuthService()
         {
-            _client = new HttpClient();
+            _client = new HttpClient
             {
-                _client.BaseAddress = new Uri("https://10.0.2.2:5138/api/auth/registrar-usuario");
-
+                BaseAddress = new Uri(BaseUrl)
             };
+
+            // Configurar headers
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Configurar el tiempo de espera
+            _client.Timeout = TimeSpan.FromSeconds(30);
         }
 
-        //registar admin
         public async Task<bool> RegistrarAdministradorAsync(RegistrarAdministradorDto dto)
         {
             try
             {
-                // Serializar el DTO a JSON
-                var json = JsonConvert.SerializeObject(dto);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                Debug.WriteLine("Iniciando registro de administrador...");
+                Debug.WriteLine($"Datos: {JsonConvert.SerializeObject(dto)}");
 
-                // Realizar la petición POST
-                var response = await _client.PostAsync(ApiUrlRegistrarAdministrador, content);
+                var content = new StringContent(
+                    JsonConvert.SerializeObject(dto),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var response = await _client.PostAsync("registrar-administrador", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Debug.WriteLine($"Código de respuesta: {response.StatusCode}");
+                Debug.WriteLine($"Contenido de respuesta: {responseContent}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Administrador registrado correctamente.");
+                    Debug.WriteLine("Administrador registrado correctamente.");
                     return true;
                 }
                 else
                 {
-                    // Mostrar el mensaje de error devuelto por la API
-                    var errorResponse = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Error al registrar administrador: {errorResponse}");
+                    Debug.WriteLine($"Error al registrar administrador. Status: {response.StatusCode}, Mensaje: {responseContent}");
                     return false;
                 }
             }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Error de red al registrar administrador: {ex.Message}");
+                throw new Exception("Error de conexión con el servidor. Verifica tu conexión a internet.", ex);
+            }
             catch (Exception ex)
             {
-                Console.WriteLine($"Excepción al registrar administrador: {ex.Message}");
-                return false;
+                Debug.WriteLine($"Error inesperado al registrar administrador: {ex.Message}");
+                throw new Exception("Error inesperado al registrar administrador.", ex);
             }
         }
 
-        //registrar dueño y paseador
         public async Task<bool> Register(RegistrarUsuarioDto registerDto)
         {
             try
             {
-                // Serializar el objeto RegisterDto a JSON
-                var jsonContent = JsonConvert.SerializeObject(registerDto);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                Debug.WriteLine("Iniciando registro de usuario...");
+                Debug.WriteLine($"Datos: {JsonConvert.SerializeObject(registerDto)}");
 
-                // Enviar el POST a la API en el endpoint correspondiente
-                var response = await _client.PostAsync("api/auth/registrar-usuario", content);
+                var content = new StringContent(
+                    JsonConvert.SerializeObject(registerDto),
+                    Encoding.UTF8,
+                    "application/json"
+                );
 
-                // Validar respuesta de la API
+                var response = await _client.PostAsync("registrar-usuario", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Debug.WriteLine($"Código de respuesta: {response.StatusCode}");
+                Debug.WriteLine($"Contenido de respuesta: {responseContent}");
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return true; // Registro exitoso
+                    Debug.WriteLine("Usuario registrado correctamente.");
+                    return true;
                 }
                 else
                 {
-                    // Manejar errores específicos según la respuesta de la API
-                    Console.WriteLine($"Error al registrar: {response.ReasonPhrase}");
+                    Debug.WriteLine($"Error al registrar usuario. Status: {response.StatusCode}, Mensaje: {responseContent}");
                     return false;
                 }
             }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Error de red al registrar usuario: {ex.Message}");
+                throw new Exception("Error de conexión con el servidor. Verifica tu conexión a internet.", ex);
+            }
             catch (Exception ex)
             {
-                // Manejo de errores
-                Console.WriteLine($"Excepción al registrar: {ex.Message}");
-                return false;
+                Debug.WriteLine($"Error inesperado al registrar usuario: {ex.Message}");
+                throw new Exception("Error inesperado al registrar usuario.", ex);
             }
         }
     }
