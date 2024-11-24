@@ -70,12 +70,12 @@ namespace Pagina1.Servicios
             }
         }
 
-        public async Task<bool> Register(RegistrarUsuarioDto registerDto)
+        public async Task<bool> RegistrarUsuarioAsync(RegistrarUsuarioDto registerDto)
         {
             try
             {
                 Debug.WriteLine("Iniciando registro de usuario...");
-                Debug.WriteLine($"Datos: {JsonConvert.SerializeObject(registerDto)}");
+                Debug.WriteLine($"Datos de registro: {JsonConvert.SerializeObject(registerDto)}");
 
                 var content = new StringContent(
                     JsonConvert.SerializeObject(registerDto),
@@ -83,6 +83,7 @@ namespace Pagina1.Servicios
                     "application/json"
                 );
 
+                // Asegurarse de que la URL coincida exactamente con el endpoint del backend
                 var response = await _client.PostAsync("registrar-usuario", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
@@ -94,21 +95,24 @@ namespace Pagina1.Servicios
                     Debug.WriteLine("Usuario registrado correctamente.");
                     return true;
                 }
-                else
-                {
-                    Debug.WriteLine($"Error al registrar usuario. Status: {response.StatusCode}, Mensaje: {responseContent}");
-                    return false;
-                }
+
+                Debug.WriteLine($"Error al registrar usuario. Status: {response.StatusCode}, Mensaje: {responseContent}");
+                return false;
             }
             catch (HttpRequestException ex)
             {
                 Debug.WriteLine($"Error de red al registrar usuario: {ex.Message}");
                 throw new Exception("Error de conexión con el servidor. Verifica tu conexión a internet.", ex);
             }
+            catch (JsonException ex)
+            {
+                Debug.WriteLine($"Error al procesar JSON: {ex.Message}");
+                throw new Exception("Error al procesar los datos del usuario.", ex);
+            }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error inesperado al registrar usuario: {ex.Message}");
-                throw new Exception("Error inesperado al registrar usuario.", ex);
+                throw new Exception($"Error inesperado al registrar usuario: {ex.Message}", ex);
             }
         }
     }

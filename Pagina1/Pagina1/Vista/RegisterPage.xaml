@@ -24,6 +24,14 @@
                    Margin="0,5"
                    AutomationId="NombreEntry" />
 
+            <!-- Usuario -->
+            <Label Text="Usuario" FontAttributes="Bold" />
+            <Entry x:Name="UsuarioEntry"
+       Placeholder="Ingrese su usuario"
+       Margin="0,5"
+       IsVisible="True"
+       AutomationId="UsuarioEntry" />
+
             <!-- Correo -->
             <Label Text="Correo electrónico" FontAttributes="Bold" />
             <Entry x:Name="CorreoEntry"
@@ -81,8 +89,6 @@
                 <Entry x:Name="ClaveMaestraEntry" 
                        Placeholder="Clave maestra" 
                        IsPassword="True"/>
-                <Entry x:Name="UsuarioAdminEntry"
-                       Placeholder="Usuario administrador"/>
             </StackLayout>
 
             <!-- Campo adicional para dirección y celular (solo visible para Dueño o Paseador) -->

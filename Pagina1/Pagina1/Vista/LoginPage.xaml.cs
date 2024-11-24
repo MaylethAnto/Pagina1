@@ -3,78 +3,59 @@ using Xamarin.Forms;
 using System.Net.Mail;
 using Pagina1.Modelo; // Asegúrate de tener el namespace correcto para tus páginas
 using Pagina1.Vista;
-using Pagina1.Servicios;
+using Pagina1.Servicios; // Asumo que AuthService está en este namespace
 using Xamarin.Essentials;
-
 
 namespace Pagina1.Vista
 {
     public partial class LoginPage : ContentPage
     {
-        private AuthService _authService;
+        private readonly LoginService _loginService;
+        private readonly AuthService _authService;
 
         public LoginPage()
         {
             InitializeComponent();
-            _authService = new AuthService();
+            _loginService = new LoginService();  // Para login
+            _authService = new AuthService();    // Para registro
         }
 
+        // Acción cuando se presiona el botón de Login
         private async void OnLoginClicked(object sender, EventArgs e)
         {
-            // Usar FindByName para obtener referencias a los Entry
-            string username = usernameEntry.Text;
-            string password = passwordEntry.Text;
-            string role = rolePicker.SelectedItem.ToString();
+            string nombreUsuario = usernameEntry.Text;
+            string contrasena = passwordEntry.Text;
 
-            // Validaciones de entrada
-            if (usernameEntry == null || passwordEntry == null)
+            // Validación básica de campos
+            if (string.IsNullOrEmpty(nombreUsuario) || string.IsNullOrEmpty(contrasena))
             {
-                await DisplayAlert("Error", "No se encuentra registrado", "OK");
+                statusLabel.Text = "Por favor ingresa usuario y contraseña";
+                statusLabel.TextColor = Color.Red;
                 return;
             }
 
-            if (string.IsNullOrEmpty(usernameEntry.Text) || string.IsNullOrEmpty(passwordEntry.Text))
-            {
-                await DisplayAlert("Error", "Por favor ingrese usuario y contraseña", "OK");
-                return;
-            }
+            // Llamar al servicio de login
+            var result = await _loginService.LoginUsuarioAsync(nombreUsuario, contrasena);
 
-            if (!IsValidEmail(usernameEntry.Text))
+            // Mostrar el resultado (mensaje de éxito o error)
+            if (result.Contains("Login exitoso"))
             {
-                await DisplayAlert("Error", "Por favor ingrese un email válido", "OK");
-                return;
-            }
-
-            // Aquí llamamos a la API para verificar las credenciales
-            var result = await LoginService.Login(username, password, role);
-
-            if (result.IsSuccessful)
-            {
-                // Aquí se navega según el rol
-                if (role == "Administrador")
-                {
-                    await Navigation.PushAsync(new AdminPage());
-                }
-                else if (role == "Dueño")
-                {
-                    await Navigation.PushAsync(new DuenoPage());
-                }
-                else if (role == "Paseador")
-                {
-                    await Navigation.PushAsync(new PaseadorPage());
-                }
+                statusLabel.TextColor = Color.Green;
             }
             else
             {
-                await DisplayAlert("Error", "Credenciales incorrectas", "OK");
+                statusLabel.TextColor = Color.Red;
             }
+            statusLabel.Text = result;
         }
 
+        // Acción cuando se presiona el botón de Registro
         private async void OnRegisterClicked(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new RegisterPage());
         }
 
+        // Método de validación para un correo electrónico
         private bool IsValidEmail(string email)
         {
             try

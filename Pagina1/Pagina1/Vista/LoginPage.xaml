@@ -10,16 +10,10 @@
         <Label Text="Contraseña" />
         <Entry x:Name="passwordEntry" Placeholder="Ingrese su contraseña" IsPassword="True" />
 
-        <Label Text="Seleccionar rol" />
-        <Picker x:Name="rolePicker">
-            <Picker.Items>
-                <x:String>Administrador</x:String>
-                <x:String>Dueño</x:String>
-                <x:String>Paseador</x:String>
-            </Picker.Items>
-        </Picker>
-
         <Button Text="Iniciar sesión" Clicked="OnLoginClicked" />
+
+        <!-- Agregamos el Label para mostrar el estado del login -->
+        <Label x:Name="statusLabel" Text="" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
 
         <Button x:Name="RegisterButton" 
                 Text="Registrarse"

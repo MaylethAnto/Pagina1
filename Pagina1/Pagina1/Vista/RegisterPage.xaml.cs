@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Pagina1.Modelo;
 
 namespace Pagina1.Vista
 {
@@ -47,6 +48,7 @@ namespace Pagina1.Vista
 
                 var cedula = CedulaEntry.Text.Trim();
                 var nombre = NombreEntry.Text.Trim();
+                var usuario = UsuarioEntry.Text.Trim();
                 var correoBase = CorreoEntry.Text.Trim();
                 var dominioCorreo = CorreoPicker.SelectedItem?.ToString() ?? "";
                 var correoCompleto = $"{correoBase}{dominioCorreo}";
@@ -58,11 +60,11 @@ namespace Pagina1.Vista
 
                 if (rolSeleccionado == "Administrador")
                 {
-                    await RegistrarAdministrador(cedula, nombre, correoCompleto, contrasena);
+                    await RegistrarAdministrador(cedula, nombre, usuario, correoCompleto, contrasena);
                 }
                 else
                 {
-                    await RegistrarUsuario(cedula, nombre, correoCompleto, contrasena, rolSeleccionado);
+                    await RegistrarUsuario(cedula, nombre, usuario, correoCompleto, contrasena, rolSeleccionado);
                 }
             }
             catch (Exception ex)
@@ -80,6 +82,7 @@ namespace Pagina1.Vista
                 // Validar campos requeridos
                 if (string.IsNullOrWhiteSpace(CedulaEntry.Text) ||
                     string.IsNullOrWhiteSpace(NombreEntry.Text) ||
+                    string.IsNullOrWhiteSpace(UsuarioEntry.Text) ||
                     string.IsNullOrWhiteSpace(CorreoEntry.Text) ||
                     string.IsNullOrWhiteSpace(ContraseñaEntry.Text) ||
                     string.IsNullOrWhiteSpace(ConfirmarContraseñaEntry.Text) ||
@@ -114,7 +117,7 @@ namespace Pagina1.Vista
             }
         }
 
-        private async Task RegistrarAdministrador(string cedula, string nombre, string correo, string contrasena)
+        private async Task RegistrarAdministrador(string cedula, string nombre, string usuario,string correo, string contrasena)
         {
             try
             {
@@ -122,9 +125,8 @@ namespace Pagina1.Vista
 
                 // Validar la clave maestra
                 var claveMaestra = ClaveMaestraEntry?.Text;
-                var usuarioAdmin = UsuarioAdminEntry?.Text;
 
-                if (string.IsNullOrWhiteSpace(claveMaestra) || string.IsNullOrWhiteSpace(usuarioAdmin))
+                if (string.IsNullOrWhiteSpace(claveMaestra))
                 {
                     await DisplayAlert("Error", "La clave maestra y el usuario administrador son requeridos", "OK");
                     return;
@@ -140,9 +142,9 @@ namespace Pagina1.Vista
                 {
                     CedulaAdministrador = cedula,
                     NombreAdministrador = nombre,
+                    UsuarioAdministrador = usuario,
                     CorreoAdministrador = correo,
                     ContrasenaAdministrador = contrasena,
-                    UsuarioAdministrador = usuarioAdmin,
                     ClaveMaestra = claveMaestra
                 };
 
@@ -166,7 +168,7 @@ namespace Pagina1.Vista
             }
         }
 
-        private async Task RegistrarUsuario(string cedula, string nombre, string correo, string contrasena, string rol)
+        private async Task RegistrarUsuario(string cedula, string nombre, string usuario,string correo, string contrasena, string rol)
         {
             try
             {
@@ -191,6 +193,7 @@ namespace Pagina1.Vista
                 {
                     Cedula = cedula,
                     Nombre = nombre,
+                    Usuario = usuario,
                     Correo = correo,
                     Contrasena = contrasena,
                     Rol = rol,
@@ -199,7 +202,7 @@ namespace Pagina1.Vista
                 };
 
                 Debug.WriteLine("Enviando datos al servicio de registro de usuario");
-                var result = await _authService.Register(registerDto);
+                var result = await _authService.RegistrarUsuarioAsync(registerDto);
 
                 if (result)
                 {
@@ -224,13 +227,13 @@ namespace Pagina1.Vista
             {
                 CedulaEntry.Text = string.Empty;
                 NombreEntry.Text = string.Empty;
+                UsuarioEntry.Text = string.Empty;
                 CorreoEntry.Text = string.Empty;
                 ContraseñaEntry.Text = string.Empty;
                 ConfirmarContraseñaEntry.Text = string.Empty;
                 DireccionEntry.Text = string.Empty;
                 CelularEntry.Text = string.Empty;
                 ClaveMaestraEntry.Text = string.Empty;
-                UsuarioAdminEntry.Text = string.Empty;
                 RolPicker.SelectedItem = null;
                 CorreoPicker.SelectedItem = null;
 
