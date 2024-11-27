@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -6,38 +7,66 @@ using Newtonsoft.Json;
 
 namespace Pagina1.Servicios
 {
-    //login admin
+    public class LoginResponse
+    {
+        public string Mensaje { get; set; }
+        public string Rol { get; set; }
+    }
+
     public class LoginService
     {
-        private static readonly string apiUrl = "http://10.0.2.2:5138/api/Login/Login";
+        private readonly HttpClient _httpClient;
+        private const string ApiUrl = "http://10.0.2.2:5138/api/Login/Login"; 
 
-        public async Task<string> LoginUsuarioAsync (string nombreUsuario, string contrasena)
+        public LoginService()
         {
-            using (var client = new HttpClient())
+            _httpClient = new HttpClient();
+        }
+
+        public async Task<LoginResponse> LoginUsuarioAsync(string nombreUsuario, string contrasena)
+        {
+            var loginRequest = new LoginRequest
             {
-                var request = new
-                {
-                    NombreUsuario = nombreUsuario,
-                    Contrasena = contrasena
-                };
+                NombreUsuario = nombreUsuario,
+                Contrasena = contrasena
+            };
 
-                var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            try
+            {
+                var json = JsonConvert.SerializeObject(loginRequest);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync(apiUrl, content);
+                var response = await _httpClient.PostAsync(ApiUrl, content);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<dynamic>(responseContent);
-                    return $"Login exitoso. Rol: {result.rol}";
-
+                    return JsonConvert.DeserializeObject<LoginResponse>(responseContent);
                 }
                 else
                 {
-                    return "Error al iniciar sesión: " + response.ReasonPhrase;
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return new LoginResponse
+                    {
+                        Mensaje = "Error al iniciar sesión",
+                        Rol = ""
+                    };
                 }
             }
+            catch (Exception ex)
+            {
+                return new LoginResponse
+                {
+                    Mensaje = $"Error de conexión: {ex.Message}",
+                    Rol = ""
+                };
+            }
         }
+    }
 
+    public class LoginRequest
+    {
+        public string NombreUsuario { get; set; }
+        public string Contrasena { get; set; }
     }
 }

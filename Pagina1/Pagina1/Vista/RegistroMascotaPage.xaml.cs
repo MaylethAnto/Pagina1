@@ -2,10 +2,8 @@
 using Pagina1.Servicios;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -18,10 +16,14 @@ namespace Pagina1.Vista
         private readonly ApiService _apiService;
         private string _fotoPath;  // Variable para almacenar la ruta de la foto seleccionada
 
-        public RegistroMascotaPage()
+        // Variable para almacenar los datos del dueño
+        private Dueno _dueno;
+
+        public RegistroMascotaPage(Dueno dueno = null)
         {
             InitializeComponent();
             _apiService = new ApiService(); // Inicializa tu servicio de API
+                                          
         }
 
         // Método para manejar el clic en el botón "Seleccionar Foto"
@@ -43,55 +45,105 @@ namespace Pagina1.Vista
             }
         }
 
-        // Método para manejar el clic en el botón "Guardar"
-        private async void OnGuardarClicked(object sender, EventArgs e)
+        // Evento para manejar el clic en el botón "Guardar"
+
+        private async void OnRegisterButtonClicked(object sender, EventArgs e)
         {
-            // Validación básica de campos
-            if (string.IsNullOrEmpty(NombreEntry.Text) || string.IsNullOrEmpty(RazaEntry.Text) || string.IsNullOrEmpty(EdadEntry.Text) || string.IsNullOrEmpty(PesoEntry.Text))
+            try
             {
-                await DisplayAlert("Error", "Por favor, complete todos los campos.", "OK");
-                return;
+                // Validación de los campos
+                if (!ValidarCampos())
+                {
+                    return;
+                }
+
+                // Obtenemos la cédula ingresada en el Entry
+                var cedulaDueno = CedulaEntry.Text.Trim();
+
+                // Validar que la cédula no esté vacía
+                if (string.IsNullOrEmpty(cedulaDueno))
+                {
+                    await DisplayAlert("Error", "Por favor ingresa la cédula del dueño", "OK");
+                    return;
+                }
+
+                // Obtener los datos del dueño
+                var dueno = await _apiService.ObtenerDuenoPorCedulaAsync(cedulaDueno);
+
+                // Verificar que el dueño existe
+                if (dueno == null)
+                {
+                    await DisplayAlert("Error", "No se pudo obtener la información del dueño. Verifica la cédula.", "OK");
+                    return;
+                }
+
+                // Crear el objeto de la mascota
+                var nuevaMascota = new Canino
+                {
+                    nombre_canino = NombreEntry.Text.Trim(),
+                    edad_canino = int.Parse(EdadEntry.Text),
+                    raza_canino = RazaPicker.SelectedItem.ToString(),
+                    peso_canino = decimal.Parse(PesoEntry.Text),
+                    foto_canino = _fotoPath != null ? File.ReadAllBytes(_fotoPath) : null,
+                    cedula_dueno = cedulaDueno,
+                    Dueno = dueno // Asignar la información del dueño
+                };
+
+                // Llamar al servicio para guardar la mascota
+                var resultado = await _apiService.GuardarMascotaAsync(nuevaMascota);
+
+                if (resultado)
+                {
+                    await DisplayAlert("Éxito", "¡Mascota registrada exitosamente!", "OK");
+                    LimpiarFormulario();
+                }
+                else
+                {
+                    await DisplayAlert("Error", "No se pudo registrar la mascota", "OK");
+                }
             }
-
-            // Crear la mascota
-            var canino = new Canino
+            catch (Exception ex)
             {
-                nombre_canino = NombreEntry.Text,
-                edad_canino = int.Parse(EdadEntry.Text),
-                raza_canino = RazaEntry.Text,
-                peso_canino = Convert.ToDecimal(PesoEntry.Text),  // Asignamos el peso aquí
-                foto_canino = File.ReadAllBytes(_fotoPath)  // Asignamos la ruta de la foto aquí
-
-            };
-
-            // Guardar la mascota en la base de datos a través de la API
-            var resultado = await _apiService.GuardarMascotaAsync(canino); // Llama al servicio para guardar la mascota
-
-            if (resultado)
-            {
-                await DisplayAlert("Éxito", "Mascota registrada con éxito.", "OK");
-                // Limpiar los campos después de guardar
-                NombreEntry.Text = string.Empty;
-                RazaEntry.Text = string.Empty;
-                EdadEntry.Text = string.Empty;
-                PesoEntry.Text = string.Empty;  // Limpiar el campo de peso
-                FotoImagen.Source = null;  // Limpiar la foto
-            }
-            else
-            {
-                await DisplayAlert("Error", "Hubo un error al guardar la mascota.", "OK");
+                await DisplayAlert("Error", $"Error inesperado: {ex.Message}", "OK");
             }
         }
 
-        // Método para manejar el clic en el botón "Cancelar"
+
+        private bool ValidarCampos()
+        {
+            if (string.IsNullOrWhiteSpace(NombreEntry.Text) ||
+                string.IsNullOrWhiteSpace(EdadEntry.Text) ||
+                RazaPicker.SelectedItem == null ||
+                string.IsNullOrWhiteSpace(PesoEntry.Text) ||
+                string.IsNullOrWhiteSpace(_fotoPath))
+            {
+                DisplayAlert("Error", "Por favor, complete todos los campos", "OK");
+                return false;
+            }
+
+            if (!int.TryParse(EdadEntry.Text, out _) || !float.TryParse(PesoEntry.Text, out _))
+            {
+                DisplayAlert("Error", "Edad y peso deben ser valores numéricos válidos", "OK");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void LimpiarFormulario()
+        {
+            NombreEntry.Text = string.Empty;
+            EdadEntry.Text = string.Empty;
+            RazaPicker.SelectedItem = null;
+            PesoEntry.Text = string.Empty;
+            FotoImagen.Source = null;
+            _fotoPath = null;
+
+        }
+
         private void OnCancelarClicked(object sender, EventArgs e)
         {
-            // Limpiar los campos
-            NombreEntry.Text = string.Empty;
-            RazaEntry.Text = string.Empty;
-            EdadEntry.Text = string.Empty;
-            PesoEntry.Text = string.Empty;  // Limpiar el campo de peso
-            FotoImagen.Source = null;  // Limpiar la foto
+
         }
     }
 }

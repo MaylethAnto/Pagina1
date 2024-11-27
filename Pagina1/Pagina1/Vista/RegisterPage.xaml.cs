@@ -7,6 +7,7 @@ using System.Diagnostics;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Pagina1.Modelo;
+using Xamarin.Essentials;
 
 namespace Pagina1.Vista
 {
@@ -28,6 +29,7 @@ namespace Pagina1.Vista
             // Configurar el Picker de roles
             RolPicker.SelectedIndexChanged += OnRoleChanged;
         }
+
 
         private void OnRoleChanged(object sender, EventArgs e)
         {
@@ -170,6 +172,7 @@ namespace Pagina1.Vista
 
         private async Task RegistrarUsuario(string cedula, string nombre, string usuario,string correo, string contrasena, string rol)
         {
+            Preferences.Set("CedulaUsuario", cedula);
             try
             {
                 Debug.WriteLine("Iniciando registro de usuario normal");

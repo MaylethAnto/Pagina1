@@ -2,31 +2,60 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pagina1.Vista.MainPage">
-    <ScrollView>
-        <StackLayout Padding="20">
-            <Button Text="Registrar Mascota"
-                    Clicked="OnRegistrarMascotaClicked"/>
+    <ContentPage.Content>
+        <StackLayout>
+            <!-- Profile Information -->
+            <StackLayout>
+                <StackLayout Padding="20,0">
+                    <Frame BackgroundColor="#6a5acd" Padding="20" CornerRadius="10" Margin="20,20,20,0">
+                        <StackLayout>
+                            <StackLayout Orientation="Horizontal">
+                                <Image Source="default_pet_image.png" WidthRequest="100" HeightRequest="100" Aspect="AspectFill" />
+                                <StackLayout Margin="10,0,0,0" VerticalOptions="Center">
+                                    <Label Text="Nombre de Mascota" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                                    <Label Text="Edad y Peso" TextColor="White" />
+                                    <StackLayout Orientation="Horizontal">
+                                        <Image Source="dog_footprint_icon.png" WidthRequest="20" HeightRequest="20" />
+                                        <Image Source="star_icon.png" WidthRequest="20" HeightRequest="20" />
+                                    </StackLayout>
+                                </StackLayout>
+                            </StackLayout>
+                            <Label Text="Dueño:" TextColor="White" FontSize="18" Margin="0,10,0,0" />
+                            <Label Text="Nombre del Dueño" TextColor="White" FontSize="16" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </StackLayout>
 
-            <Button Text="Registrar Dueño"
-                    Clicked="OnRegistrarDuenoClicked"/>
+            <!-- Sections Grid -->
+            <Grid Margin="20,20,20,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="White" Padding="10" CornerRadius="10">
+                    <Label Text="Historial Clínico" VerticalOptions="Center" HorizontalOptions="Center" />
+                </Frame>
+                <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="White" Padding="10" CornerRadius="10">
+                    <Label Text="Entrenador" VerticalOptions="Center" HorizontalOptions="Center" />
+                </Frame>
+                <Frame Grid.Row="1" Grid.Column="0" BackgroundColor="White" Padding="10" CornerRadius="10">
+                    <Label Text="Comida" VerticalOptions="Center" HorizontalOptions="Center" />
+                </Frame>
+                <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="White" Padding="10" CornerRadius="10">
+                    <Label Text="Compras" VerticalOptions="Center" HorizontalOptions="Center" />
+                </Frame>
+            </Grid>
 
-            <Button Text="Historial Clínico"
-                    Clicked="OnHistorialClinicoClicked"/>
-
-            <Button Text="GPS"
-                    Clicked="OnGPSClicked"/>
-
-            <Button Text="Ejercicios"
-                    Clicked="OnEjerciciosClicked"/>
-
-            <Button Text="Paseadores"
-                    Clicked="OnPaseadoresClicked"/>
-
-            <Button Text="Recetas"
-                    Clicked="OnRecetasClicked"/>
-
-            <Button Text="Cerrar Sesión"
-                    Clicked="OnLogoutClicked"/>
+            <!-- Buttons at the bottom -->
+            <StackLayout VerticalOptions="EndAndExpand" Margin="20">
+                <Button Text="Historial Médico Completo" BackgroundColor="Black" TextColor="White" Margin="0,10,0,0" CornerRadius="10" />
+                <Button Text="Agregar Mascota" BackgroundColor="Black" TextColor="White" Margin="0,10,0,0" CornerRadius="10" Clicked="OnAddPetClicked"/>
+            </StackLayout>
         </StackLayout>
-    </ScrollView>
+    </ContentPage.Content>
 </ContentPage>

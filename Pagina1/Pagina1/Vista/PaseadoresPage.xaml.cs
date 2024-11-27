@@ -16,5 +16,16 @@ namespace Pagina1.Vista
         {
             InitializeComponent();
         }
+        private void OnVerMisPerrosClick(object sender, EventArgs e)
+        {
+            // Navegar a la lista de perros asignados
+            // Navigation.PushAsync(new ListaPerrosAsignadosPage());
+        }
+
+        private void OnVerSolicitudesClick(object sender, EventArgs e)
+        {
+            // Navegar a solicitudes de paseo
+            // Navigation.PushAsync(new SolicitudesPaseoPage());
+        }
     }
 }

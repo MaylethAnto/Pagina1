@@ -2,11 +2,79 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pagina1.Vista.AdminPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Picker para Selección de Usuarios -->
+        <Picker x:Name="SeleccionTipoUsuario" 
+                Title="Seleccione tipo de usuario"
+                HorizontalOptions="Center" 
+                Margin="20"
+                WidthRequest="250"/>
+
+        <!-- Stacks para cada tipo de usuario -->
+        <StackLayout x:Name="StackDuenos" Grid.Row="1" IsVisible="True">
+            <Label Text="Dueños Registrados" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <ListView x:Name="ListaDuenos" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="{Binding Nombre}" />
+                                <Label Grid.Column="1" Text="{Binding Apellido}" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
-    </ContentPage.Content>
+
+        <StackLayout x:Name="StackCaninos" Grid.Row="1" IsVisible="False">
+            <Label Text="Caninos Registrados" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <ListView x:Name="ListaCaninos" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="{Binding Nombre}" />
+                                <Label Grid.Column="1" Text="{Binding Raza}" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+
+        <StackLayout x:Name="StackPaseadores" Grid.Row="1" IsVisible="False">
+            <Label Text="Paseadores Registrados" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <ListView x:Name="ListaPaseadores" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="{Binding Nombre}" />
+                                <Label Grid.Column="1" Text="{Binding Apellido}" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </Grid>
 </ContentPage>

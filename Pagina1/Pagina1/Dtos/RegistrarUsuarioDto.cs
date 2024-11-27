@@ -14,6 +14,8 @@ namespace Pagina1.Dtos
             public string Rol { get; set; } 
             public string Direccion {  get; set; }
             public string Celular { get; set; }
+
+
         }
 }
 

@@ -17,7 +17,7 @@ namespace Pagina1.Servicios
     public class ApiService
     {
         private readonly HttpClient _client;
-        private readonly string _baseUrl = "http://10.0.2.2:5138/api/";
+        private readonly string _baseUrl = "http://10.0.2.2:5138/api/Canino";
 
         public ApiService()
         {
@@ -45,24 +45,19 @@ namespace Pagina1.Servicios
             }
         }
 
-        public async Task<Canino> AddCanineAsync(Canino canino)
+        // Método para obtener los datos del dueño por cédula
+        public async Task<Dueno> ObtenerDuenoPorCedulaAsync(string cedula)
         {
             try
             {
-                var json = JsonConvert.SerializeObject(canino);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await _client.PostAsync($"{_baseUrl}caninos", content);
-                if (response.IsSuccessStatusCode)
-                {
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<Canino>(jsonResponse);
-                }
-                return null;
+                var url = $"http://10.0.2.2:5138/api/Dueno/{cedula}";
+                var response = await _client.GetStringAsync(url);
+                return JsonConvert.DeserializeObject<Dueno>(response);  // Asumiendo que la respuesta es un JSON
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error: {ex.Message}");
-                throw;
+                Debug.WriteLine($"Error obteniendo dueño: {ex.Message}");
+                return null;
             }
         }
 
@@ -70,37 +65,23 @@ namespace Pagina1.Servicios
         {
             try
             {
-                var formData = new MultipartFormDataContent();
-
-                // Serializa el objeto Canino a JSON y lo agrega al formulario
-                var jsonCanino = JsonConvert.SerializeObject(canino);
-                var jsonContent = new StringContent(jsonCanino, Encoding.UTF8, "application/json");
-                formData.Add(jsonContent, "canino");
-
-                // Agrega la imagen como parte del formulario
-                var fileContent = new ByteArrayContent(canino.foto_canino);
-                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
-                formData.Add(fileContent, "foto", "foto_canino.jpg");
-
-                // Envía la solicitud POST al servidor
-                var response = await _client.PostAsync($"{_baseUrl}caninos", formData);
+                var content = new StringContent(JsonConvert.SerializeObject(canino), Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync("api/Canino", content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return true; // Retorna true si la solicitud es exitosa
+                    return true;
                 }
-                else
-                {
-                    Debug.WriteLine("Error al guardar la mascota");
-                    return false; // Retorna false si hay algún error
-                }
+
+                return false;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error: {ex.Message}");
-                return false; // Retorna false si ocurre una excepción
+                Console.WriteLine($"Error al registrar mascota: {ex.Message}");
+                return false;
             }
         }
+
 
 
         // Métodos para Historial Clínico

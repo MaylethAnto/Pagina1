@@ -8,22 +8,44 @@
                    Placeholder="Nombre de la mascota"
                    TextColor="Black"/>
 
+            <!-- Entry para Edad con solo números -->
             <Entry x:Name="EdadEntry"
-                   Placeholder="Edad"
+                   Placeholder="Edad de la mascota"
                    Keyboard="Numeric"
                    TextColor="Black"/>
-            
-            <Entry x:Name="RazaEntry"
-                   Placeholder="Raza"
-                   TextColor="Black"/>
 
+            <!-- Picker para seleccionar raza -->
+            <Picker x:Name="RazaPicker"
+                    Title="Selecciona la raza"
+                    TextColor="Black">
+                <Picker.ItemsSource>
+                    <!-- Lista de razas más comunes -->
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Akita Americano</x:String>
+                        <x:String>Labrador</x:String>
+                        <x:String>Golden Retriever</x:String>
+                        <x:String>Bulldog</x:String>
+                        <x:String>Chihuahua</x:String>
+                        <x:String>Pastor Alemán</x:String>
+                        <x:String>Poodle</x:String>
+                        <x:String>Pitbull</x:String>
+                        <x:String>Beagle</x:String>
+                        <x:String>Boxer</x:String>
+                        <x:String>Rottweiler</x:String>
+                        <x:String>Husky Siberiano</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <!-- Entry para Peso con solo números -->
             <Entry x:Name="PesoEntry"
-                   Placeholder="Peso (kg)"
+                   Placeholder="Peso de la mascota"
                    Keyboard="Numeric"
                    TextColor="Black"/>
 
             <Button Text="Seleccionar Foto"
                     Clicked="OnSeleccionarFotoClicked"/>
+            <Entry x:Name="CedulaEntry" Placeholder="Ingrese la cédula del dueño" />
 
             <Image x:Name="FotoImagen" 
                    WidthRequest="200"
@@ -31,7 +53,7 @@
                    Aspect="AspectFill"/>
 
             <Button Text="Guardar"
-                    Clicked="OnGuardarClicked"/>
+                    Clicked="OnRegisterButtonClicked"/>
 
             <Button Text="Cancelar"
                     Clicked="OnCancelarClicked"/>

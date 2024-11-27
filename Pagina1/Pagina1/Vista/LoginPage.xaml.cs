@@ -5,6 +5,7 @@ using Pagina1.Modelo; // Asegúrate de tener el namespace correcto para tus pág
 using Pagina1.Vista;
 using Pagina1.Servicios; // Asumo que AuthService está en este namespace
 using Xamarin.Essentials;
+using System.Threading.Tasks;
 
 namespace Pagina1.Vista
 {
@@ -26,47 +27,70 @@ namespace Pagina1.Vista
             string nombreUsuario = usernameEntry.Text;
             string contrasena = passwordEntry.Text;
 
-            // Validación básica de campos
-            if (string.IsNullOrEmpty(nombreUsuario) || string.IsNullOrEmpty(contrasena))
+            if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(contrasena))
             {
-                statusLabel.Text = "Por favor ingresa usuario y contraseña";
-                statusLabel.TextColor = Color.Red;
+                statusLabel.Text = "Por favor, ingresa tu usuario y contraseña.";
                 return;
             }
 
-            // Llamar al servicio de login
-            var result = await _loginService.LoginUsuarioAsync(nombreUsuario, contrasena);
-
-            // Mostrar el resultado (mensaje de éxito o error)
-            if (result.Contains("Login exitoso"))
+            try
             {
-                statusLabel.TextColor = Color.Green;
+                var response = await _loginService.LoginUsuarioAsync(nombreUsuario, contrasena);
+
+                if (response.Mensaje == "Login exitoso")
+                {
+                    var rol = response.Rol;
+                    if (rol == "Admin")
+                    {
+                        await Navigation.PushAsync(new AdminPage());
+                    }
+                    else if (rol == "Dueño")
+                    {
+                        bool esPrimeraVez = await VerificarPrimeraVez(nombreUsuario);
+                        if (esPrimeraVez)
+                        {
+                            await Navigation.PushAsync(new RegistroMascotaPage());
+                        }
+                        else
+                        {
+                            await Navigation.PushAsync(new MainPage());
+                        }
+                    }
+                    else if (rol == "Paseador")
+                    {
+                        await Navigation.PushAsync(new PaseadoresPage());
+                    }
+                    else
+                    {
+                        statusLabel.TextColor = Color.Red;
+                        statusLabel.Text = "Rol desconocido, contacte al administrador.";
+                    }
+                }
+                else
+                {
+                    statusLabel.TextColor = Color.Red;
+                    statusLabel.Text = response.Mensaje;
+                }
             }
-            else
+            catch (Exception ex)
             {
                 statusLabel.TextColor = Color.Red;
+                statusLabel.Text = "Error al iniciar sesión: " + ex.Message;
             }
-            statusLabel.Text = result;
         }
 
-        // Acción cuando se presiona el botón de Registro
         private async void OnRegisterClicked(object sender, EventArgs e)
         {
+            // Navigate to the RegisterPage
             await Navigation.PushAsync(new RegisterPage());
         }
 
-        // Método de validación para un correo electrónico
-        private bool IsValidEmail(string email)
+        // Método simulado para verificar si es la primera vez que inicia sesión
+        private async Task<bool> VerificarPrimeraVez(string nombreUsuario)
         {
-            try
-            {
-                var addr = new MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
+            // Lógica simulada: podrías consultar una API para validar este estado
+            return await Task.FromResult(true); // Cambiar según la lógica real
         }
+
     }
 }

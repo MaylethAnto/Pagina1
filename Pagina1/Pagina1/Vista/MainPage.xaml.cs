@@ -26,11 +26,6 @@ namespace Pagina1.Vista
             await Navigation.PushAsync(new RegistroMascotaPage());
         }
 
-        private async void OnRegistrarDuenoClicked(object sender, EventArgs e)
-        {
-            await Navigation.PushAsync(new RegistroDuenoPage());
-        }
-
         private async void OnHistorialClinicoClicked(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new HistorialClinicoPage());
@@ -54,6 +49,12 @@ namespace Pagina1.Vista
         private async void OnRecetasClicked(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new RecetasPage());
+        }
+
+        private async void OnAddPetClicked(object sender, EventArgs e)
+        {
+            // Navigate to the page for adding a new pet
+            await Navigation.PushAsync(new RegistroMascotaPage());
         }
 
         private async void OnLogoutClicked(object sender, EventArgs e)
