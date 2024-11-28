@@ -19,6 +19,7 @@ namespace Pagina1.Servicios
         private readonly HttpClient _client;
         private readonly string _baseUrl = "http://10.0.2.2:5138/api/Canino";
 
+
         public ApiService()
         {
             _client = new HttpClient();
@@ -46,40 +47,58 @@ namespace Pagina1.Servicios
         }
 
         // Método para obtener los datos del dueño por cédula
+
         public async Task<Dueno> ObtenerDuenoPorCedulaAsync(string cedula)
         {
             try
             {
-                var url = $"http://10.0.2.2:5138/api/Dueno/{cedula}";
-                var response = await _client.GetStringAsync(url);
-                return JsonConvert.DeserializeObject<Dueno>(response);  // Asumiendo que la respuesta es un JSON
+                var response = await _client.GetAsync($"http://10.0.2.2:5138/api/Canino/usuarios?cedulaDueno={cedula}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Lee la respuesta como un string
+                    var content = await response.Content.ReadAsStringAsync();
+
+                    // Deserializa el JSON en un objeto Dueno
+                    var dueno = JsonConvert.DeserializeObject<Dueno>(content);
+                    return dueno; // Retorna los datos del dueño si se encontró
+                }
+                else
+                {
+                    return null; // Si no se encuentra el dueño, retorna null
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error obteniendo dueño: {ex.Message}");
+                await App.Current.MainPage.DisplayAlert("Error", $"Error inesperado: {ex.Message}", "OK");
                 return null;
             }
         }
 
+
         public async Task<bool> GuardarMascotaAsync(Canino canino)
         {
-            try
+            using (var client = new HttpClient())
             {
-                var content = new StringContent(JsonConvert.SerializeObject(canino), Encoding.UTF8, "application/json");
-                var response = await _client.PostAsync("api/Canino", content);
+                var json = JsonConvert.SerializeObject(canino);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                // Asegúrate de que _baseUrl esté bien configurada
+                var response = await client.PostAsync($"{_baseUrl}/RegistrarCanino", content);
 
+                // response.IsSuccessStatusCode es un bool
                 if (response.IsSuccessStatusCode)
                 {
+                    // Retorna true si la operación fue exitosa
                     return true;
                 }
+                else
+                {
+                    // Obtener detalles del error en texto
+                    var error = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error al registrar la mascota: {error}");
+                }
+            }
 
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al registrar mascota: {ex.Message}");
-                return false;
-            }
         }
 
 
@@ -306,6 +325,10 @@ namespace Pagina1.Servicios
             return response.IsSuccessStatusCode;
         }
 
+        internal static async Task<IEnumerable<object>> ObtenerCaninosConDuenosAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

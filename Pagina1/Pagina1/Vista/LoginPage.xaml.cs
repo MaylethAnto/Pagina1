@@ -40,30 +40,34 @@ namespace Pagina1.Vista
                 if (response.Mensaje == "Login exitoso")
                 {
                     var rol = response.Rol;
-                    if (rol == "Admin")
+
+                    // Redirigir según el rol
+                    switch (rol)
                     {
-                        await Navigation.PushAsync(new AdminPage());
-                    }
-                    else if (rol == "Dueño")
-                    {
-                        bool esPrimeraVez = await VerificarPrimeraVez(nombreUsuario);
-                        if (esPrimeraVez)
-                        {
-                            await Navigation.PushAsync(new RegistroMascotaPage());
-                        }
-                        else
-                        {
-                            await Navigation.PushAsync(new MainPage());
-                        }
-                    }
-                    else if (rol == "Paseador")
-                    {
-                        await Navigation.PushAsync(new PaseadoresPage());
-                    }
-                    else
-                    {
-                        statusLabel.TextColor = Color.Red;
-                        statusLabel.Text = "Rol desconocido, contacte al administrador.";
+                        case "Administrador":
+                            await Navigation.PushAsync(new AdminPage());
+                            break;
+
+                        case "Dueño":
+                            bool esPrimeraVez = await VerificarPrimeraVez(nombreUsuario);
+                            if (esPrimeraVez)
+                            {
+                                await Navigation.PushAsync(new RegistroMascotaPage());
+                            }
+                            else
+                            {
+                                await Navigation.PushAsync(new MainPage());
+                            }
+                            break;
+
+                        case "Paseador":
+                            await Navigation.PushAsync(new PaseadoresPage());
+                            break;
+
+                        default:
+                            statusLabel.TextColor = Color.Red;
+                            statusLabel.Text = "Rol desconocido, contacte al administrador.";
+                            break;
                     }
                 }
                 else
@@ -78,6 +82,7 @@ namespace Pagina1.Vista
                 statusLabel.Text = "Error al iniciar sesión: " + ex.Message;
             }
         }
+
 
         private async void OnRegisterClicked(object sender, EventArgs e)
         {

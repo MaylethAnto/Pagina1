@@ -8,6 +8,23 @@
                HorizontalOptions="Center" 
                FontAttributes="Bold"/>
 
+        <ListView x:Name="CaninosListView"
+                  HasUnevenRows="True"
+                  ItemSelected="OnCaninoSeleccionado">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Padding="10">
+                            <Label Text="{Binding NombreCanino}" FontSize="Medium" FontAttributes="Bold"/>
+                            <Label Text="Raza: {Binding Raza}" FontSize="Small"/>
+                            <Label Text="Dueño: {Binding NombreDueno}" FontSize="Small"/>
+                            <Label Text="Dirección Dueño: {Binding DireccionDueno}" FontSize="Small"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
         <Button Text="Ver Mis Perros Asignados" 
                 Clicked="OnVerMisPerrosClick"
                 BackgroundColor="#4CAF50"

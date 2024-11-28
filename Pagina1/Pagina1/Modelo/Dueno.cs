@@ -6,10 +6,13 @@ namespace Pagina1.Modelo
 {
     public class Dueno
     {
-        public string cedula_dueno { get; set; } = null;
-        public string nombre_dueno { get; set; }
-        public string direccion_dueno { get; set; }
-        public string celular_dueno { get; set; }
-        public string correo_dueno { get; set; }
+        public string CedulaDueno { get; set; } = null;
+        public string NombreDueno { get; set; }
+        public string DireccionDueno { get; set; }
+        public string CelularDueno { get; set; }
+        public string CorreoDueno { get; set; }
+
+        public ICollection<Canino> Caninos { get; set; }
+
     }
 }

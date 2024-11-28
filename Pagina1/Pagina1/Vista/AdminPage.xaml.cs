@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using Pagina1.Modelo;
+using Pagina1.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +16,13 @@ namespace Pagina1.Vista
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AdminPage : ContentPage
     {
-        private readonly HttpClient _cliente;
-        private const string URL_BASE = "http://10.0.2.2:5138/api/Administrador";
+        private readonly AdminService _adminService;
 
         public AdminPage()
         {
             InitializeComponent();
-            _cliente = new HttpClient();
+            _adminService = new AdminService(this);
+            CargarDatosIniciales();
 
             // Configurar el Picker
             SeleccionTipoUsuario.Items.Add("Dueños");
@@ -29,40 +31,25 @@ namespace Pagina1.Vista
             SeleccionTipoUsuario.SelectedIndex = 0; // Seleccionar Dueños por defecto
 
             SeleccionTipoUsuario.SelectedIndexChanged += OnTipoUsuarioSeleccionado;
-
-            CargarDatosIniciales();
         }
 
         private async void CargarDatosIniciales()
         {
             try
             {
-                var caninos = await ObtenerDatos("caninos");
-                var duenos = await ObtenerDatos("dueños");
-                var paseadores = await ObtenerDatos("paseadores");
+                // Llamamos al servicio para obtener los datos de los paseadores, dueños y caninos
+                var paseadores = await _adminService.ObtenerDatos<Paseador>("paseadores");
+                var caninos = await _adminService.ObtenerDatos<Canino>("caninos");
+                var duenos = await _adminService.ObtenerDatos<Dueno>("dueños");
 
-                // Configura los ListViews
-                ListaCaninos.ItemsSource = caninos;
-                ListaDuenos.ItemsSource = duenos;
-                ListaPaseadores.ItemsSource = paseadores;
+                // Asignamos los datos deserializados a los ListViews
+                ListaPaseadores.ItemsSource = paseadores ?? new List<Paseador>();
+                ListaCaninos.ItemsSource = caninos ?? new List<Canino>();
+                ListaDuenos.ItemsSource = duenos ?? new List<Dueno>();
             }
             catch (Exception ex)
             {
                 await DisplayAlert("Error", $"No se pudieron cargar los datos: {ex.Message}", "Aceptar");
-            }
-        }
-
-        private async Task<List<object>> ObtenerDatos(string endpoint)
-        {
-            try
-            {
-                var respuesta = await _cliente.GetStringAsync($"{URL_BASE}/{endpoint}");
-                return JsonConvert.DeserializeObject<List<object>>(respuesta);
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Error", $"Error al obtener {endpoint}: {ex.Message}", "Aceptar");
-                return new List<object>();
             }
         }
 
@@ -90,4 +77,5 @@ namespace Pagina1.Vista
             }
         }
     }
+
 }

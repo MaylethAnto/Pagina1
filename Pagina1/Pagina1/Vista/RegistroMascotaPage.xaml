@@ -4,22 +4,29 @@
              x:Class="Pagina1.Vista.RegistroMascotaPage">
     <ScrollView>
         <StackLayout Padding="20">
+
+            <!-- Cédula del dueño -->
+            <Entry x:Name="CedulaDuenoEntry" 
+                   Placeholder="Cédula del dueño"
+                   TextColor="Black"
+                  />
+
+            <!-- Nombre de la mascota -->
             <Entry x:Name="NombreEntry"
                    Placeholder="Nombre de la mascota"
                    TextColor="Black"/>
 
-            <!-- Entry para Edad con solo números -->
+            <!-- Edad de la mascota -->
             <Entry x:Name="EdadEntry"
-                   Placeholder="Edad de la mascota"
+                   Placeholder="Edad de la mascota (años)"
                    Keyboard="Numeric"
                    TextColor="Black"/>
 
-            <!-- Picker para seleccionar raza -->
+            <!-- Selector de raza -->
             <Picker x:Name="RazaPicker"
                     Title="Selecciona la raza"
                     TextColor="Black">
                 <Picker.ItemsSource>
-                    <!-- Lista de razas más comunes -->
                     <x:Array Type="{x:Type x:String}">
                         <x:String>Akita Americano</x:String>
                         <x:String>Labrador</x:String>
@@ -37,26 +44,26 @@
                 </Picker.ItemsSource>
             </Picker>
 
-            <!-- Entry para Peso con solo números -->
+            <!-- Peso de la mascota -->
             <Entry x:Name="PesoEntry"
-                   Placeholder="Peso de la mascota"
+                   Placeholder="Peso de la mascota en (kg)"
                    Keyboard="Numeric"
                    TextColor="Black"/>
 
+            <!-- Seleccionar foto -->
             <Button Text="Seleccionar Foto"
                     Clicked="OnSeleccionarFotoClicked"/>
-            <Entry x:Name="CedulaEntry" Placeholder="Ingrese la cédula del dueño" />
-
             <Image x:Name="FotoImagen" 
                    WidthRequest="200"
                    HeightRequest="200"
                    Aspect="AspectFill"/>
 
+            <!-- Botones de acción -->
             <Button Text="Guardar"
                     Clicked="OnRegisterButtonClicked"/>
-
             <Button Text="Cancelar"
                     Clicked="OnCancelarClicked"/>
+
         </StackLayout>
     </ScrollView>
 </ContentPage>
