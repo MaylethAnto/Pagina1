@@ -2,6 +2,7 @@
 using Pagina1.Servicios;
 using System;
 using System.IO;
+using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -18,6 +19,22 @@ namespace Pagina1.Vista
         {
             InitializeComponent();
             _apiService = new ApiService();
+
+            // Generar una lista de edades de 1 a 25 años
+            var edades = Enumerable.Range(1, 25).ToList();
+            EdadPicker.ItemsSource = edades;
+        }
+
+        // Evento cuando se selecciona una edad del Picker
+        private void OnEdadPickerSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (EdadPicker.SelectedIndex != -1)
+            {
+                // Obtener la edad seleccionada
+                int edadSeleccionada = (int)EdadPicker.SelectedItem;
+                // Realiza lo que necesites con la edad seleccionada, por ejemplo:
+                DisplayAlert("Edad Seleccionada", $"Has seleccionado {edadSeleccionada} años.", "OK");
+            }
         }
 
         // Seleccionar foto
@@ -49,7 +66,7 @@ namespace Pagina1.Vista
             var nuevaMascota = new Canino
             {
                 NombreCanino = NombreEntry.Text.Trim(),
-                EdadCanino = int.Parse(EdadEntry.Text),
+                EdadCanino = (int)EdadPicker.SelectedItem,
                 RazaCanino = RazaPicker.SelectedItem.ToString(),
                 PesoCanino = decimal.Parse(PesoEntry.Text),
                 FotoCanino = !string.IsNullOrEmpty(_fotoPath) ? File.ReadAllBytes(_fotoPath) : null,
@@ -78,7 +95,7 @@ namespace Pagina1.Vista
         {
             if (string.IsNullOrWhiteSpace(CedulaDuenoEntry.Text) ||
                 string.IsNullOrWhiteSpace(NombreEntry.Text) ||
-                string.IsNullOrWhiteSpace(EdadEntry.Text) ||
+                EdadPicker.SelectedIndex == -1 ||
                 RazaPicker.SelectedItem == null ||
                 string.IsNullOrWhiteSpace(PesoEntry.Text))
             {
@@ -86,7 +103,7 @@ namespace Pagina1.Vista
                 return false;
             }
 
-            if (!int.TryParse(EdadEntry.Text, out _) || !decimal.TryParse(PesoEntry.Text, out _))
+            if (!int.TryParse(PesoEntry.Text, out _))
             {
                 DisplayAlert("Error", "Edad y peso deben ser valores numéricos.", "OK");
                 return false;
@@ -100,7 +117,7 @@ namespace Pagina1.Vista
         {
             CedulaDuenoEntry.Text = string.Empty;
             NombreEntry.Text = string.Empty;
-            EdadEntry.Text = string.Empty;
+            EdadPicker.SelectedIndex = -1;
             RazaPicker.SelectedItem = null;
             PesoEntry.Text = string.Empty;
             FotoImagen.Source = null;
@@ -108,9 +125,29 @@ namespace Pagina1.Vista
         }
 
         // Cancelar
-        private void OnCancelarClicked(object sender, EventArgs e)
+        private async void OnCancelarClicked(object sender, EventArgs e)
         {
-            LimpiarFormulario();
+            // Mostrar una alerta de confirmación
+            var respuesta = await DisplayAlert(
+                "Confirmación",
+                "¿Deseas salir de la sesión o dirigirte a otra interfaz?",
+                "Salir de sesión",
+                "Otra interfaz");
+
+            if (respuesta)
+            {
+                // Lógica para salir de la sesión (puedes redirigir o cerrar la sesión aquí)
+                await DisplayAlert("Sesión", "Has salido de la sesión", "OK");
+                // Aquí podrías agregar código para cerrar la sesión o navegar a una página de inicio de sesión
+            }
+            else
+            {
+                // Lógica para redirigir a otra interfaz
+                await DisplayAlert("Interfaz", "Te dirigirás a otra interfaz", "OK");
+                // Aquí puedes navegar a otra interfaz, por ejemplo:
+                await Navigation.PushAsync(new MainPage());
+            }
         }
+
     }
 }

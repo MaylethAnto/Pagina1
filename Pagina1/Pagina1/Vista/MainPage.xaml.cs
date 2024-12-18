@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +20,37 @@ namespace Pagina1.Vista
         {
             InitializeComponent();
             _apiService = new ApiService();
+            //CargarDatosCanino();
+            
         }
+
+       /* private async void CargarDatosCanino() 
+        {
+            try
+            {
+                //consumimos el api para obtener el id del canino
+                var canino = await ApiService.GetCaninos(1);
+                if (canino != null)
+                {
+                    //asignamos los datos a los controles
+                    NombreCanino.Text = canino.Nombre;
+                    EdadCanino.Text = $"Edad: {canino.Edad}";
+                    RazaCanino.Text = canino.Raza;
+                    PesoCanino.Text = $"Peso: {canino.Peso}";
+                    FotoCanino.Source = canino.Foto;
+                }
+                else
+                {
+                    await DisplayAlert("Error", "No se encontraros datos del canino.", "OK");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Ocurrió un problema: {ex.Message}", "OK");
+            }
+        }*/
 
         private async void OnRegistrarMascotaClicked(object sender, EventArgs e)
         {
@@ -33,8 +64,14 @@ namespace Pagina1.Vista
 
         private async void OnGPSClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new GPSPage());
+                 
+           //navegamos a la interfaz del gps
+           await Navigation.PushAsync(new GPSPage());
+              
+            
         }
+
+       
 
         private async void OnEjerciciosClicked(object sender, EventArgs e)
         {
@@ -53,7 +90,6 @@ namespace Pagina1.Vista
 
         private async void OnAddPetClicked(object sender, EventArgs e)
         {
-            // Navigate to the page for adding a new pet
             await Navigation.PushAsync(new RegistroMascotaPage());
         }
 

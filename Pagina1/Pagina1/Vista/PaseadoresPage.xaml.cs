@@ -26,19 +26,19 @@ namespace Pagina1.Vista
 
         private async void CargarCaninos()
         {
-            var caninos = await ApiService.ObtenerCaninosConDuenosAsync();
+            /*var caninos = await ApiService.ObtenerCaninosConDuenosAsync();
             foreach (var canino in caninos)
             {
                 Caninos.Add((CaninoConDuenoDTO)canino);
-            }
+            }*/
         }
 
         private async void OnCaninoSeleccionado(object sender, SelectedItemChangedEventArgs e)
         {
-            if (e.SelectedItem is CaninoConDuenoDTO caninoSeleccionado)
+           // if (e.SelectedItem is CaninoConDuenoDTO caninoSeleccionado)
             {
                 // Aquí puedes registrar el ID del canino en la base de datos
-                await DisplayAlert("Canino Seleccionado", $"Seleccionaste a {caninoSeleccionado.NombreCanino}", "OK");
+              //  await DisplayAlert("Canino Seleccionado", $"Seleccionaste a {caninoSeleccionado.NombreCanino}", "OK");
                 // Opcional: actualiza el paseador con el canino seleccionado
             }
         }

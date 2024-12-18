@@ -1,7 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.companyname.pagina1">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
-	<application android:label="Pagina1.Android" android:theme="@style/MainTheme"></application>
+	<uses-permission android:name="android.permission.SEND_SMS" />
+	<uses-permission android:name="android.permission.RECEIVE_SMS" />
+	<uses-permission android:name="android.permission.READ_SMS" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<application android:label="Pagina1.Android" android:theme="@style/MainTheme">
+	<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAZP3qZ5sdvVWa3ZvioIbiObrdG-lcXS5Q"/>
+
+		<receiver android:name="crc646d35881797bc4dd6.SmsReceiver"
+                  android:exported="true">
+			<!-- Agrega android:exported="true" -->
+			<intent-filter>
+				<action android:name="android.provider.Telephony.SMS_RECEIVED" />
+			</intent-filter>
+		</receiver>
+	</application>
 </manifest>

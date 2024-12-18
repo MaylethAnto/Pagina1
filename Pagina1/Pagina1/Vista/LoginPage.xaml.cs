@@ -1,9 +1,8 @@
 ﻿using System;
 using Xamarin.Forms;
 using System.Net.Mail;
-using Pagina1.Modelo; // Asegúrate de tener el namespace correcto para tus páginas
 using Pagina1.Vista;
-using Pagina1.Servicios; // Asumo que AuthService está en este namespace
+using Pagina1.Servicios; 
 using Xamarin.Essentials;
 using System.Threading.Tasks;
 

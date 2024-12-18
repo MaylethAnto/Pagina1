@@ -10,18 +10,18 @@
                     <Frame BackgroundColor="#6a5acd" Padding="20" CornerRadius="10" Margin="20,20,20,0">
                         <StackLayout>
                             <StackLayout Orientation="Horizontal">
-                                <Image Source="default_pet_image.png" WidthRequest="100" HeightRequest="100" Aspect="AspectFill" />
+                                <Image x:Name="FotoCanino" WidthRequest="100" HeightRequest="100" Aspect="AspectFill" />
                                 <StackLayout Margin="10,0,0,0" VerticalOptions="Center">
-                                    <Label Text="Nombre de Mascota" TextColor="White" FontSize="24" FontAttributes="Bold" />
-                                    <Label Text="Edad y Peso" TextColor="White" />
+                                    <Label x:Name="NombreCanino" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                                    <Label x:Name="EdadCanino" TextColor="White" />
+                                    <Label x:Name="RazaCanino" TextColor="White" />
+                                    <Label x:Name="PesoCanino" TextColor="White" />
                                     <StackLayout Orientation="Horizontal">
                                         <Image Source="dog_footprint_icon.png" WidthRequest="20" HeightRequest="20" />
                                         <Image Source="star_icon.png" WidthRequest="20" HeightRequest="20" />
                                     </StackLayout>
                                 </StackLayout>
                             </StackLayout>
-                            <Label Text="Dueño:" TextColor="White" FontSize="18" Margin="0,10,0,0" />
-                            <Label Text="Nombre del Dueño" TextColor="White" FontSize="16" />
                         </StackLayout>
                     </Frame>
                 </StackLayout>
@@ -38,16 +38,16 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="White" Padding="10" CornerRadius="10">
-                    <Label Text="Historial Clínico" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Text="Historial Clínico" VerticalOptions="Center" HorizontalOptions="Center" Clicked="OnHistorialClinicoClicked" />
                 </Frame>
                 <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="White" Padding="10" CornerRadius="10">
-                    <Label Text="Entrenador" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Text="Ejercicio" VerticalOptions="Center" HorizontalOptions="Center" Clicked="OnEjerciciosClicked" />
                 </Frame>
                 <Frame Grid.Row="1" Grid.Column="0" BackgroundColor="White" Padding="10" CornerRadius="10">
-                    <Label Text="Comida" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Text="Receta" VerticalOptions="Center" HorizontalOptions="Center" Clicked="OnRecetasClicked" />
                 </Frame>
                 <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="White" Padding="10" CornerRadius="10">
-                    <Label Text="Compras" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Text="GPS" VerticalOptions="Center" HorizontalOptions="Center" Clicked="OnGPSClicked" />
                 </Frame>
             </Grid>
 

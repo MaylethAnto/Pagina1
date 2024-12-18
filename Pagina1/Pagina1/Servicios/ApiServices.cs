@@ -46,6 +46,10 @@ namespace Pagina1.Servicios
             }
         }
 
+        //metodo obtener canino por id
+
+
+
         // Método para obtener los datos del dueño por cédula
 
         public async Task<Dueno> ObtenerDuenoPorCedulaAsync(string cedula)
